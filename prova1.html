@@ -1,0 +1,9 @@
+<html><body>
+  <div id="demoMap"></div>
+  <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+  <script>
+    map = new OpenLayers.Map("demoMap");
+    map.addLayer(new OpenLayers.Layer.OSM());
+    map.zoomToMaxExtent();
+  </script>
+</body></html>
