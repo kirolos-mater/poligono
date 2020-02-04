@@ -17,6 +17,7 @@ namespace poligono.Controllers
         // GET: Posizioni
         public ActionResult Index()
         {
+            //ViewBag.coordinate = db.Posizioni.ToList();
             return View(db.Posizioni.ToList());
         }
 
