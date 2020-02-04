@@ -31,10 +31,10 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td>
+            <td id="Lat">
                 @Html.DisplayFor(modelItem => item.Lat)
             </td>
-            <td>
+            <td id="Lon">
                 @Html.DisplayFor(modelItem => item.Lon)
             </td>
             <td>
@@ -49,24 +49,35 @@
     string x;
     string y;
     string z;
-    string[,] punti= new string[3,2];
+    string[] punti = new string[3];
     int i = 0;
+    //int j = 0;
     //Console.WriteLine(i);
-    foreach (var item in Model) {
+    foreach (var item in Model)
+    {
         x = item.Lat.ToString().Replace(",", ".");
         y = item.Lon.ToString().Replace(",", ".");
-        z = "sono visibile";
+        z = "[" + x + ", " + y + "]";
         Console.Write(x);
         Console.Write(y);
         Console.Write(z);
-        punti = new [,] {{ x, y}};
+        punti[i] = z;
         Console.Write(punti);
         i++;
     };
     Console.WriteLine(i);
     Console.WriteLine(punti);
+    string puntiStr = "";
+    i = 0;
+    foreach(var item in punti)
+    {
+        string text = punti[i];
+        puntiStr = puntiStr + text + ", ";
+        i++;
+    }
+    Console.WriteLine(puntiStr);
     //Console.WriteLine(z);
-    //coordinata = "[45.4502977, 9.1675544]";
+    //string coordinata = "[45.4502977, 9.1675544]";
 }
 <div id="mapid"></div>
 <style>
@@ -75,8 +86,8 @@
     }
 </style>
 <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
-<script>
-    var punti = '<%punti%>';
+<script type="text/javascript">
+    var puntijs = [@puntiStr];
     var mymap = L.map('mapid').setView([45.4502977, 9.1675544], 13);
     //var OsmLayer = new OpenLayers.Map("Mappa");
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -86,7 +97,7 @@
         accessToken: 'pk.eyJ1Ijoia2lyb2xvc21hdGVyIiwiYSI6ImNqdzNxMXdtZzE5d2MzeXBndGd4YTh3dGMifQ.YW8rFAPQyZYz0ylkcqsk-g'
     }).addTo(mymap);
     var polygon = L.polygon([
-        punti
+        puntijs
     ]).addTo(mymap);
 </script>
 @*<div id="Mappa"></div>
