@@ -143,7 +143,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\MappaController.cs" />
     <Compile Include="Controllers\PosizioniController.cs" />
     <Compile Include="Controllers\PosizionisController.cs" />
     <Compile Include="Global.asax.cs">
@@ -189,17 +188,6 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Posizioni\Create.cshtml" />
-    <Content Include="Views\Posizioni\Delete.cshtml" />
-    <Content Include="Views\Posizioni\Details.cshtml" />
-    <Content Include="Views\Posizioni\Edit.cshtml" />
-    <Content Include="Views\Posizioni\Index.cshtml" />
-    <Content Include="Views\Posizioni\Mappa.cshtml" />
-    <Content Include="Views\Mappa\Create.cshtml" />
-    <Content Include="Views\Mappa\Delete.cshtml" />
-    <Content Include="Views\Mappa\Details.cshtml" />
-    <Content Include="Views\Mappa\Edit.cshtml" />
-    <Content Include="Views\Mappa\Index.cshtml" />
     <Content Include="Views\Posizionis\Create.cshtml" />
     <Content Include="Views\Posizionis\Delete.cshtml" />
     <Content Include="Views\Posizionis\Details.cshtml" />

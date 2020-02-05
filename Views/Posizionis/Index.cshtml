@@ -25,7 +25,7 @@
         </th>
         <th></th>
     </tr>
-
+    @{int numeroPosizioni = 0; }
     @foreach (var item in Model)
     {
         <tr>
@@ -41,15 +41,18 @@
                 @Html.ActionLink("Delete", "Delete", new { id = item.ID })
             </td>
         </tr>
+        numeroPosizioni ++;
     }
 
 </table>
 
 @{
+
     string x;
     string y;
     string z;
-    string[] punti = new string[4];
+    Console.WriteLine(numeroPosizioni);
+    string[] punti = new string[numeroPosizioni];
     int i = 0;
     //int j = 0;
     //Console.WriteLine(i);
