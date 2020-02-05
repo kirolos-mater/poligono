@@ -1,19 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data.Entity;
-
 namespace poligono.Models
 {
-    public class Posizioni
+    using System;
+    using System.Data.Entity;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Linq;
+
+    public partial class Posizioni : DbContext
     {
-        public int ID { get; set; }
-        public decimal Lat { get; set; }
-        public decimal Lon { get; set; }
-    }
-    public class PosizioniDB : DbContext
-    {
-        public DbSet<Posizioni> Posizioni { get; set; }
+        public Posizioni()
+            : base("name=Posizioni")
+        {
+        }
+
+        public virtual DbSet<Posizionis> Posizionis { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+        }
     }
 }

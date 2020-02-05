@@ -56,6 +56,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -143,10 +145,12 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappaController.cs" />
     <Compile Include="Controllers\PosizioniController.cs" />
+    <Compile Include="Controllers\PosizionisController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Posizioni.cs" />
+    <Compile Include="Models\Posizionis.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +200,11 @@
     <Content Include="Views\Mappa\Details.cshtml" />
     <Content Include="Views\Mappa\Edit.cshtml" />
     <Content Include="Views\Mappa\Index.cshtml" />
+    <Content Include="Views\Posizionis\Create.cshtml" />
+    <Content Include="Views\Posizionis\Delete.cshtml" />
+    <Content Include="Views\Posizionis\Details.cshtml" />
+    <Content Include="Views\Posizionis\Edit.cshtml" />
+    <Content Include="Views\Posizionis\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -212,6 +221,9 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

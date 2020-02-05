@@ -1,0 +1,104 @@
+﻿@model IEnumerable<poligono.Models.Posizionis>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<link rel="stylesheet" href="http://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin="" />
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+<script src="http://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin=""></script>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Lat)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Lon)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lat)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lon)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
+
+</table>
+
+@{
+    string x;
+    string y;
+    string z;
+    string[] punti = new string[4];
+    int i = 0;
+    //int j = 0;
+    //Console.WriteLine(i);
+    foreach (var item in Model)
+    {
+        x = item.Lat.ToString().Replace(",", ".");
+        y = item.Lon.ToString().Replace(",", ".");
+        z = "[" + x + ", " + y + "]";
+        Console.Write(x);
+        Console.Write(y);
+        Console.Write(z);
+        punti[i] = z;
+        Console.Write(punti);
+        i++;
+    };
+    Console.WriteLine(i);
+    Console.WriteLine(punti);
+    string puntiStr = "";
+    i = 0;
+    foreach (var item in punti)
+    {
+        string text = punti[i];
+        puntiStr = puntiStr + text + ", ";
+        i++;
+    }
+    Console.WriteLine(puntiStr);
+    //Console.WriteLine(z);
+    //string coordinata = "[45.4502977, 9.1675544]";
+}
+<div id="mapid"></div>
+<style>
+    #mapid {
+        height: 1080px;
+    }
+</style>
+<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+<script type="text/javascript">
+    var puntijs = [@puntiStr];
+    console.log(puntijs);
+    var mymap = L.map('mapid').setView([45.4502977, 9.1675544], 13);
+    //var OsmLayer = new OpenLayers.Map("Mappa");
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox/streets-v11',
+        accessToken: 'pk.eyJ1Ijoia2lyb2xvc21hdGVyIiwiYSI6ImNqdzNxMXdtZzE5d2MzeXBndGd4YTh3dGMifQ.YW8rFAPQyZYz0ylkcqsk-g'
+    }).addTo(mymap);
+    var polygon = L.polygon([
+        puntijs
+    ]).addTo(mymap);
+    console.log(polygon);
+</script>

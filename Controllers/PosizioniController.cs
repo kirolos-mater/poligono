@@ -12,13 +12,13 @@ namespace poligono.Controllers
 {
     public class PosizioniController : Controller
     {
-        private PosizioniDB db = new PosizioniDB();
+        private Posizioni db = new Posizioni();
 
         // GET: Posizioni
         public ActionResult Index()
         {
             //ViewBag.coordinate = db.Posizioni.ToList();
-            return View(db.Posizioni.ToList());
+            return View(db.Posizionis.ToList());
         }
 
         // GET: Posizioni/Details/5
@@ -28,7 +28,7 @@ namespace poligono.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Posizioni posizioni = db.Posizioni.Find(id);
+            Posizionis posizioni = db.Posizionis.Find(id);
             if (posizioni == null)
             {
                 return HttpNotFound();
@@ -47,11 +47,11 @@ namespace poligono.Controllers
         // Per ulteriori dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Lat,Lon")] Posizioni posizioni)
+        public ActionResult Create([Bind(Include = "ID,Lat,Lon")] Posizionis posizioni)
         {
             if (ModelState.IsValid)
             {
-                db.Posizioni.Add(posizioni);
+                db.Posizionis.Add(posizioni);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -66,7 +66,7 @@ namespace poligono.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Posizioni posizioni = db.Posizioni.Find(id);
+            Posizionis posizioni = db.Posizionis.Find(id);
             if (posizioni == null)
             {
                 return HttpNotFound();
@@ -79,7 +79,7 @@ namespace poligono.Controllers
         // Per ulteriori dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Lat,Lon")] Posizioni posizioni)
+        public ActionResult Edit([Bind(Include = "ID,Lat,Lon")] Posizionis posizioni)
         {
             if (ModelState.IsValid)
             {
@@ -97,7 +97,7 @@ namespace poligono.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Posizioni posizioni = db.Posizioni.Find(id);
+            Posizionis posizioni = db.Posizionis.Find(id);
             if (posizioni == null)
             {
                 return HttpNotFound();
@@ -110,8 +110,8 @@ namespace poligono.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Posizioni posizioni = db.Posizioni.Find(id);
-            db.Posizioni.Remove(posizioni);
+            Posizionis posizioni = db.Posizionis.Find(id);
+            db.Posizionis.Remove(posizioni);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

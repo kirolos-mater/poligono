@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="PosizioniModelStoreContainer" CdmEntityContainer="Entities">
+    <EntitySetMapping Name="Posizionis">
+      <EntityTypeMapping TypeName="PosizioniModel.Posizionis">
+        <MappingFragment StoreEntitySet="Posizionis">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Lat" ColumnName="Lat" />
+          <ScalarProperty Name="Lon" ColumnName="Lon" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
