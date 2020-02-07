@@ -150,7 +150,7 @@
     for (var i = 0; i < puntijs.length; i++) {
         /*cluster di marker*/
         var puntiMatrice = puntijs[i];
-        var marker = L.marker(new L.LatLng(puntiMatrice[0], puntiMatrice[1]));
+        var marker = L.marker(new L.LatLng(puntiMatrice[0], puntiMatrice[1]),{ color: colore[tipo] });
         markers.addLayer(marker);
         if (tipo != puntiMatrice[2]) {
             tipo = puntiMatrice[2];
