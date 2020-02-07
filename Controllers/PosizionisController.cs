@@ -46,7 +46,7 @@ namespace poligono.Controllers
         // Per ulteriori dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Lat,Lon")] Posizionis posizionis)
+        public ActionResult Create([Bind(Include = "ID,Lat,Lon,Tipo")] Posizionis posizionis)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +78,7 @@ namespace poligono.Controllers
         // Per ulteriori dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Lat,Lon")] Posizionis posizionis)
+        public ActionResult Edit([Bind(Include = "ID,Lat,Lon,Tipo")] Posizionis posizionis)
         {
             if (ModelState.IsValid)
             {

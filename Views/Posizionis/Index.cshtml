@@ -27,24 +27,30 @@
         <th>
             @Html.DisplayNameFor(model => model.Lon)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Tipo)
+        </th>
         <th></th>
     </tr>
     @{int numeroPosizioni = 0; }
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lat)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Lon)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-            </td>
-        </tr>
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lat)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Lon)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Tipo)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+        @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+    </td>
+</tr>
         numeroPosizioni ++;
     }
 
@@ -55,6 +61,7 @@
     string x;
     string y;
     string z;
+    string tipo;
     Console.WriteLine(numeroPosizioni);
     string[] punti = new string[numeroPosizioni];
     int i = 0;
@@ -64,9 +71,11 @@
     {
         x = item.Lat.ToString().Replace(",", ".");
         y = item.Lon.ToString().Replace(",", ".");
-        z = "[" + x + ", " + y + "]";
+        tipo = item.Tipo.ToString();
+        z = "[" + x + ", " + y + ", " + tipo + "]";
         Console.Write(x);
         Console.Write(y);
+        Console.Write(tipo);
         Console.Write(z);
         punti[i] = z;
         Console.Write(punti);
@@ -111,7 +120,7 @@
     //poligono che usa come vertici le coordinate del database
     //var polygon = L.polygon([
     //    puntijs
-    //], {stroke: false}).addTo(mymap);
+    //], {stroke: true}).addTo(mymap);
     //console.log(polygon);
     /*funzione distanza*/
     function getDistance(origin, destination) {
@@ -132,7 +141,7 @@
     function toRadian(degree) {
         return degree*Math.PI/180;
     }
-    var centroArea = puntijs[0];
+    
     //var distance = getDistance([lat1, lng1], [lat2, lng2])
     /*riferimento per aree e cluster http://leaflet.github.io/Leaflet.markercluster/example/marker-clustering-realworld.388.html */
 	var markers = L.markerClusterGroup();
@@ -141,17 +150,21 @@
         var puntiMatrice = puntijs[i];
         var marker = L.marker(new L.LatLng(puntiMatrice[0], puntiMatrice[1]));
         markers.addLayer(marker);
+        /* crea l'area */
+        var centroArea = puntijs[0];
         var distance = getDistance([puntiMatrice[0], puntiMatrice[1]], [centroArea[0], centroArea[1]]);
         var raggio = 0;
         if (distance > raggio) {
             raggio = distance + 200;
         }
+        /* aree che si chiariscono all'aumentare della distanza dal centro */
+        var areaGrande = L.circle(new L.LatLng(centroArea[0], centroArea[1]), { radius: raggio, stroke: false }).addTo(map);
         /*cluster di cerchi*/
         //var centriCerchi = puntijs[i];
         //var centro = L.circle(new L.LatLng(centriCerchi[0], centriCerchi[1]), { radius: 200, stroke: false }).addTo(map);
     }
     map.addLayer(markers);
-    var areaGrande = L.circle(new L.LatLng(centroArea[0], centroArea[1]), { radius: raggio, stroke: true }).addTo(map);
+    
     
 
     

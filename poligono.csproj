@@ -148,8 +148,28 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\C__MigrationHistory.cs">
+      <DependentUpon>Posizionis.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Posizioni.cs" />
-    <Compile Include="Models\Posizionis.cs" />
+    <Compile Include="Models\Posizionis.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Posizionis.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Posizionis.cs">
+      <DependentUpon>Posizionis.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Posizionis.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Posizionis.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Posizionis1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Posizionis.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -161,8 +181,25 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Models\Posizionis.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Posizionis.edmx</DependentUpon>
+      <LastGenOutput>Posizionis.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\Posizionis.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Posizionis.edmx</DependentUpon>
+      <LastGenOutput>Posizionis1.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <EntityDeploy Include="Models\Posizionis.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Posizionis.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\Posizionis.edmx.diagram">
+      <DependentUpon>Posizionis.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
