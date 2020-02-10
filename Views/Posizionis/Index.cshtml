@@ -228,8 +228,8 @@
             var distanzaMarkerVertice2 = getDistance(punto2, puntiMatrice);
             var sommaDistanze = distanzaMarkerVertice1 + distanzaMarkerVertice2;
             //console.log(distanzaMarkerVerticePoligono);
-            if (sommaDistanze <= (distanzaVerticiPoligono + 200)) {
-                var alertMarkerBordo = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 100, stroke: false, color: 'yellow' }).addTo(map);
+            if (sommaDistanze <= (distanzaVerticiPoligono + 40)) {
+                var alertMarkerBordo = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 50, stroke: false, color: 'yellow' }).addTo(map);
             }
         }
         console.log(dentro);
