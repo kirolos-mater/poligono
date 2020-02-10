@@ -226,9 +226,10 @@
             var verticePoligono = puntiAssegnati[contatore1];
             var distanzaMarkerVertice1 = getDistance(punto1, puntiMatrice);
             var distanzaMarkerVertice2 = getDistance(punto2, puntiMatrice);
+            var limite = 40;
             var sommaDistanze = distanzaMarkerVertice1 + distanzaMarkerVertice2;
             //console.log(distanzaMarkerVerticePoligono);
-            if (sommaDistanze <= (distanzaVerticiPoligono + 40)) {
+            if (sommaDistanze <= (distanzaVerticiPoligono + limite)) {
                 var alertMarkerBordo = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 50, stroke: false, color: 'yellow' }).addTo(map);
             }
         }
