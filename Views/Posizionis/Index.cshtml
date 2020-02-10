@@ -104,22 +104,6 @@
 </style>
 <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
 <script type="text/javascript">
-    var puntijs = [@puntiStr];// ponte C# javascript
-    console.log(puntijs);
-    var mymap = L.map('mapid').setView(puntijs[0], 13);
-    map = mymap;
-    //var OsmLayer = new OpenLayers.Map("Mappa");
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox/streets-v11',
-        accessToken: 'pk.eyJ1Ijoia2lyb2xvc21hdGVyIiwiYSI6ImNqdzNxMXdtZzE5d2MzeXBndGd4YTh3dGMifQ.YW8rFAPQyZYz0ylkcqsk-g'
-    }).addTo(mymap);
-    //poligono che usa come vertici le coordinate del database
-    //var polygon = L.polygon([
-    //    puntijs
-    //], {stroke: true}).addTo(mymap);
-    //console.log(polygon);
     /*funzione distanza*/
     function getDistance(origin, destination) {
     // return distance in meters
@@ -139,9 +123,66 @@
     function toRadian(degree) {
         return degree*Math.PI/180;
     }
-    
+    /* funzione per determinare se un punto si trova all'interno di un poligono */
+    function isMarkerInsidePolygon(marker, poly) {
+        var inside = false;
+        var x = marker.getLatLng().lat, y = marker.getLatLng().lng;
+        for (var ii=0;ii<poly.getLatLngs().length;ii++){
+            var polyPoints = poly.getLatLngs()[ii];
+            console.log(polyPoints);
+            for (var i = 0, j = polyPoints.length - 1; i < polyPoints.length; j = i++) {
+                var xi = polyPoints[i].lat, yi = polyPoints[i].lng;
+                var xj = polyPoints[j].lat, yj = polyPoints[j].lng;
+
+                var intersect = ((yi > y) != (yj > y))
+                    && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+        }
+
+        return inside;
+    };
+
+    var puntijs = [@puntiStr];// ponte C# javascript
+    console.log(puntijs);
+    var mymap = L.map('mapid').setView(puntijs[0], 13);
+    map = mymap;
+    //var OsmLayer = new OpenLayers.Map("Mappa");
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox/streets-v11',
+        accessToken: 'pk.eyJ1Ijoia2lyb2xvc21hdGVyIiwiYSI6ImNqdzNxMXdtZzE5d2MzeXBndGd4YTh3dGMifQ.YW8rFAPQyZYz0ylkcqsk-g'
+    }).addTo(mymap);
+    //poligono che usa come vertici le coordinate del database
+    //var poligonoPercorso = L.polygon([
+    //    puntijs
+    //], {stroke: true}).addTo(mymap);
+    //console.log(poligonoPercorso);
+    /* poligono che usa come vertici coordinate assegnate */
+    var puntiAssegnati = [[45.4523599440727, 9.154427433314709],
+    [45.45600255600573, 9.166078949272247],
+    [45.46124027981537, 9.164405250864576],
+    [45.4602168547772, 9.149835491461005]];
+    var poligonoDefinito = L.polygon([
+        puntiAssegnati
+    ]).addTo(map);
+    var perimetroPoligono = 0;
+    for (var i = 0; i < puntiAssegnati.length; i++) {
+        var j = i + 1;
+        if (j >= puntiAssegnati.length) {
+            j = 0;
+        }
+        var punto1 = puntiAssegnati[i];
+        var punto2 = puntiAssegnati[j];
+        var distanzaVerticiPoligono = getDistance(punto1, punto2);
+        console.log(distanzaVerticiPoligono);
+        perimetroPoligono += distanzaVerticiPoligono;
+    }
+    console.log(perimetroPoligono);
     //var distance = getDistance([lat1, lng1], [lat2, lng2])
     /*riferimento per aree e cluster http://leaflet.github.io/Leaflet.markercluster/example/marker-clustering-realworld.388.html */
+    /* link icone marker https://www.iconfinder.com/icons/299087/map_marker_icon */
     var markers = L.markerClusterGroup();
     var centroArea = puntijs[0];
     var colore = ['blue', 'red', 'yellow', 'green'];
@@ -150,26 +191,34 @@
     for (var i = 0; i < puntijs.length; i++) {
         /*cluster di marker*/
         var puntiMatrice = puntijs[i];
-        var marker = L.marker(new L.LatLng(puntiMatrice[0], puntiMatrice[1]),{ color: colore[tipo] });
+        var marker = L.marker(new L.LatLng(puntiMatrice[0], puntiMatrice[1]));
+        //console.log(marker);
         markers.addLayer(marker);
-        if (tipo != puntiMatrice[2]) {
-            tipo = puntiMatrice[2];
-            console.log(tipo);
-            centri[tipo] = puntiMatrice;
-            console.log(centri);
+        //if (tipo != puntiMatrice[2]) {
+        //    tipo = puntiMatrice[2];
+        //    console.log(tipo);
+        //    centri[tipo] = puntiMatrice;
+        //    console.log(centri);
+        //}
+        //centroArea = centri[tipo];
+        ///* crea l'area */
+        //var distance = getDistance([puntiMatrice[0], puntiMatrice[1]], [centroArea[0], centroArea[1]]);
+        //var raggio = 200;
+        //if (distance > raggio) {
+        //    raggio = distance + 200;
+        //}
+        ///* aree che si chiariscono all'aumentare della distanza dal centro */       
+        //var areaGrande = L.circle(new L.LatLng(centroArea[0], centroArea[1]), { radius: raggio, stroke: false, color: colore[tipo] }).addTo(map);
+        ///*cluster di cerchi*/
+        ////var centriCerchi = puntijs[i];
+        ////var centro = L.circle(new L.LatLng(centriCerchi[0], centriCerchi[1]), { radius: 200, stroke: false }).addTo(map);
+        /* distanza punti poligono */
+        /* determinazione posizione marker rispetto al poligono */
+        var dentro = isMarkerInsidePolygon(marker, poligonoDefinito);
+        console.log(dentro);
+        if (dentro) {
+            var alertMarkerInterno = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 200, stroke: false, color: 'red' }).addTo(map);
         }
-        centroArea = centri[tipo];
-        /* crea l'area */
-        var distance = getDistance([puntiMatrice[0], puntiMatrice[1]], [centroArea[0], centroArea[1]]);
-        var raggio = 200;
-        if (distance > raggio) {
-            raggio = distance + 200;
-        }
-        /* aree che si chiariscono all'aumentare della distanza dal centro */       
-        var areaGrande = L.circle(new L.LatLng(centroArea[0], centroArea[1]), { radius: raggio, stroke: false, color: colore[tipo] }).addTo(map);
-        /*cluster di cerchi*/
-        //var centriCerchi = puntijs[i];
-        //var centro = L.circle(new L.LatLng(centriCerchi[0], centriCerchi[1]), { radius: 200, stroke: false }).addTo(map);
     }
     map.addLayer(markers);
     
