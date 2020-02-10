@@ -129,7 +129,7 @@
         var x = marker.getLatLng().lat, y = marker.getLatLng().lng;
         for (var ii=0;ii<poly.getLatLngs().length;ii++){
             var polyPoints = poly.getLatLngs()[ii];
-            console.log(polyPoints);
+            //console.log(polyPoints);
             for (var i = 0, j = polyPoints.length - 1; i < polyPoints.length; j = i++) {
                 var xi = polyPoints[i].lat, yi = polyPoints[i].lng;
                 var xj = polyPoints[j].lat, yj = polyPoints[j].lng;
@@ -215,9 +215,26 @@
         /* distanza punti poligono */
         /* determinazione posizione marker rispetto al poligono */
         var dentro = isMarkerInsidePolygon(marker, poligonoDefinito);
+        for (var contatore1 = 0; contatore1 < puntiAssegnati.length; contatore1++) {
+            var contatore2 = contatore1 + 1;
+            if (contatore2 >= puntiAssegnati.length) {
+                contatore2 = 0;
+            }
+            var punto1 = puntiAssegnati[contatore1];
+            var punto2 = puntiAssegnati[contatore2];
+            var distanzaVerticiPoligono = getDistance(punto1, punto2);
+            var verticePoligono = puntiAssegnati[contatore1];
+            var distanzaMarkerVertice1 = getDistance(punto1, puntiMatrice);
+            var distanzaMarkerVertice2 = getDistance(punto2, puntiMatrice);
+            var sommaDistanze = distanzaMarkerVertice1 + distanzaMarkerVertice2;
+            //console.log(distanzaMarkerVerticePoligono);
+            if (sommaDistanze <= (distanzaVerticiPoligono + 200)) {
+                var alertMarkerBordo = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 100, stroke: false, color: 'yellow' }).addTo(map);
+            }
+        }
         console.log(dentro);
         if (dentro) {
-            var alertMarkerInterno = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 200, stroke: false, color: 'red' }).addTo(map);
+            var alertMarkerInterno = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 150, stroke: false, color: 'red' }).addTo(map);
         }
     }
     map.addLayer(markers);
