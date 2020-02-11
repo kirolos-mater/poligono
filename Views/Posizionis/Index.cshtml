@@ -15,7 +15,10 @@
 <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css">
 <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css">
 <script src="http://leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
-
+<script src="https://cdn.rawgit.com/hayeswise/Leaflet.PointInPolygon/v1.0.0/wise-leaflet-pip.js"></script>
+<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=9RTAu8YaKxnLa6KNaCblrn64EGkGVp4u"></script>
+<script src="https://api.mqcdn.com/sdk/mapquest-gl-js/v0.4.0/mapquest-gl.js"></script>
+<link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-gl-js/v0.4.0/mapquest-gl.css" />
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
@@ -35,23 +38,23 @@
     @{int numeroPosizioni = 0; }
     @foreach (var item in Model)
     {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.Lat)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Lon)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Tipo)
-    </td>
-    <td>
-        @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-        @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-    </td>
-</tr>
-        numeroPosizioni ++;
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lat)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tipo)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+        numeroPosizioni++;
     }
 
 </table>
@@ -92,7 +95,7 @@
         puntiStr = puntiStr + text + ", ";
         i++;
     }
-    Console.WriteLine(puntiStr); 
+    Console.WriteLine(puntiStr);
     //Console.WriteLine(z);
     //string coordinata = "[45.4502977, 9.1675544]";
 }
@@ -101,6 +104,14 @@
     #mapid {
         height: 1080px;
     }
+    /*.marker {
+      background-image: url('mapbox-icon.png');
+      background-size: cover;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+    }*/
 </style>
 <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
 <script type="text/javascript">
@@ -143,17 +154,50 @@
         return inside;
     };
 
-    var puntijs = [@puntiStr];// ponte C# javascript
+    var puntijs = [@puntiStr];// ponte da C# a javascript
     console.log(puntijs);
+    var mapLayer = MQ.mapLayer();
     var mymap = L.map('mapid').setView(puntijs[0], 13);
-    map = mymap;
+    var map = mymap;
     //var OsmLayer = new OpenLayers.Map("Mappa");
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
         maxZoom: 18,
-        id: 'mapbox/streets-v11',
-        accessToken: 'pk.eyJ1Ijoia2lyb2xvc21hdGVyIiwiYSI6ImNqdzNxMXdtZzE5d2MzeXBndGd4YTh3dGMifQ.YW8rFAPQyZYz0ylkcqsk-g'
     }).addTo(mymap);
+    L.control.layers({
+         'Map': mapLayer,
+         'Hybrid': MQ.hybridLayer(),
+         'Satellite': MQ.satelliteLayer(),
+         'Dark': MQ.darkLayer(),
+         'Light': MQ.lightLayer()
+      }).addTo(map);
+
+    //var geojson = {
+    //  type: 'FeatureCollection',
+    //  features: [{
+    //    type: 'Feature',
+    //    geometry: {
+    //        type: 'Point',
+    //        coordinates: puntijs[0]
+    //    },
+    //    properties: {
+    //      title: 'Mapbox',
+    //      description: 'Milano'
+    //    }
+    //  },
+    //  {
+    //    type: 'Feature',
+    //    geometry: {
+    //        type: 'Point',
+    //        coordinates: puntijs[1]
+    //    },
+    //    properties: {
+    //      title: 'Mapbox',
+    //      description: 'San Francisco, California'
+    //    }
+    //  }]
+    //};
+
     //poligono che usa come vertici le coordinate del database
     //var poligonoPercorso = L.polygon([
     //    puntijs
@@ -183,6 +227,7 @@
     //var distance = getDistance([lat1, lng1], [lat2, lng2])
     /*riferimento per aree e cluster http://leaflet.github.io/Leaflet.markercluster/example/marker-clustering-realworld.388.html */
     /* link icone marker https://www.iconfinder.com/icons/299087/map_marker_icon */
+    /* riferimento per marker openstreetmap: https://wiki.openstreetmap.org/wiki/Marker_API */
     var markers = L.markerClusterGroup();
     var centroArea = puntijs[0];
     var colore = ['blue', 'red', 'yellow', 'green'];
@@ -207,7 +252,7 @@
         //if (distance > raggio) {
         //    raggio = distance + 200;
         //}
-        ///* aree che si chiariscono all'aumentare della distanza dal centro */       
+        ///* aree che si chiariscono all'aumentare della distanza dal centro */
         //var areaGrande = L.circle(new L.LatLng(centroArea[0], centroArea[1]), { radius: raggio, stroke: false, color: colore[tipo] }).addTo(map);
         ///*cluster di cerchi*/
         ////var centriCerchi = puntijs[i];
@@ -239,9 +284,54 @@
         }
     }
     map.addLayer(markers);
-    
-    
+    /* progetto in pausa: poligono che prenda solo i vertici esterni */
+    //var verticiPoligono = puntijs;
+    //console.log(verticiPoligono);
+    //var poligonoMarker = L.polygon([verticiPoligono]);
+    //for (var i = 0; i < verticiPoligono.length; i++) {
+    //    var punto = verticiPoligono[i];
+    //    var k = i - 1;
+    //    var sommaMassima = 0;
+    //    for (var contatore1 = 0; contatore1 < verticiPoligono.length; contatore1++) {
+    //        var contatore2 = contatore1 + 1;
+    //        if (contatore2 >= puntiAssegnati.length) {
+    //            contatore2 = 0;
+    //        }
+    //        var punto1 = verticiPoligono[contatore1];
+    //        var punto2 = verticiPoligono[contatore2];
+    //        var distanzaVerticiPoligono = getDistance(punto1, punto2);
+    //        var verticePoligono = puntiAssegnati[contatore1];
+    //        var distanzaMarkerVertice1 = getDistance(punto1, punto);
+    //        var distanzaMarkerVertice2 = getDistance(punto2, punto);
+    //        var sommaDistanze = distanzaMarkerVertice1 + distanzaMarkerVertice2;
+    //        if (sommaDistanze > sommaMassima) {
+    //            sommaMassima = sommaDistanze;
+    //        }
+    //        //console.log(distanzaMarkerVerticePoligono);
 
+    //    }
+    //    var dentro = isMarkerInsidePolygon(L.marker.getLatLng([punto[0], punto[1]]), poligonoMarker);
+    //    if (dentro) {
+    //        verticiPoligono[i] = verticiPoligono[k];
+    //    }
+    //}
+    //console.log(verticiPoligono);
+    //var poligonoConvesso = L.polygon([verticiPoligono]).addTo(map);
+
+    var markerMouse = new Array();
+    var nclick = 0;
+    function salvaPosizioniMouse(ingresso) {
+        var posizioniMouse = new ingresso.LatLng();
+        return posizioniMouse;
+    }
+    map.on('click', function(e){
+        markerMouse[nclick] = L.marker(e.latlng).addTo(map);
+        //console.log(markerMouse);
+        nclick++;
+        //var posizioniMouse = salvaPosizioniMouse(markerMouse);
+    });
+    console.log(markerMouse);
     
-	
+    //console.log(posizioniMouse);
+    //var poligonoMouse = L.polygon(posizioniMouse).addTo(map);
 </script>

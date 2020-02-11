@@ -1,0 +1,1261 @@
+@using Romero5.Controllers
+@using System.Text.RegularExpressions
+@using System.Globalization
+@using System.Text
+@using System.Security.Cryptography;
+
+
+@*@model IEnumerable<Romero5.Models.MappaTag>*@
+@model  Romero5.Models.MappaPercorsiAnagrafica
+
+@{
+    /**/
+
+    ViewBag.Title = "Mappa Interventi";
+}
+
+<span class="title-left"><i class="icon ion-md-map"></i>&nbsp;Mappa</span>
+
+@*<style>
+        .main-bar {
+            height: 86px;
+        }
+
+        .main-menu {
+            top: 16px;
+        }
+
+        #menuToggle {
+            top: 32px;
+        }
+
+        #menu {
+            margin: 27px 0 0 -9px;
+            transform: translate(0,-114%);
+        }
+
+        .navbar-brand {
+            margin: 24px 0 0 66px;
+        }
+    </style>*@
+
+@functions {
+
+
+    string creaListaDiPuntiGpsPercorso(int indexPercorso)
+    {
+        string percorsoArr = "[ ";
+        foreach (var punto_gps in Model.percorsi.ElementAt(indexPercorso).punti_gps)
+        {
+            percorsoArr += "[ " + punto_gps.gps_lat + " , " + punto_gps.gps_lon + " ] , ";
+        }
+        percorsoArr += "]";
+        return percorsoArr;
+    }
+
+    //potrei usare una tupla e calcoalre tutto assieme in un solo ciclo for....
+    double findUpperLatitude()
+    {
+        double? upperLat = double.MinValue;
+
+        foreach (var mappaTag in Model.anagrafica)
+        {
+            if (mappaTag.gps_lat > upperLat)
+            {
+                upperLat = mappaTag.gps_lat;
+            }
+        }
+
+        if (Model.percorsi != null && Model.percorsi.Count() > 0)
+        {
+            for (int indexPercorso = 0; indexPercorso < Model.percorsi.Count(); indexPercorso++)
+            {
+                foreach (var punto_gps in Model.percorsi.ElementAt(indexPercorso).punti_gps)
+                {
+                    double gps_lat = double.Parse(punto_gps.gps_lat.Replace(",", "."), CultureInfo.InvariantCulture);
+                    if (gps_lat > upperLat)
+                    {
+                        upperLat = gps_lat;
+                    }
+                }
+            }
+        }
+
+        if (upperLat == double.MinValue)
+        {
+            upperLat = 45.49;
+        }
+
+        return (double)upperLat;
+    }
+
+
+    double findLowerLatitude()
+    {
+        double? lowerLat = double.MaxValue;
+
+        foreach (var mappaTag in Model.anagrafica)
+        {
+            if (mappaTag.gps_lat < lowerLat)
+            {
+                lowerLat = mappaTag.gps_lat;
+            }
+        }
+
+        if (Model.percorsi != null && Model.percorsi.Count() > 0)
+        {
+            for (int indexPercorso = 0; indexPercorso < Model.percorsi.Count(); indexPercorso++)
+            {
+                foreach (var punto_gps in Model.percorsi.ElementAt(indexPercorso).punti_gps)
+                {
+                    double gps_lat = double.Parse(punto_gps.gps_lat.Replace(",", "."), CultureInfo.InvariantCulture);
+                    if (gps_lat < lowerLat)
+                    {
+                        lowerLat = gps_lat;
+                    }
+                }
+            }
+        }
+
+        if (lowerLat == double.MaxValue)
+        {
+            lowerLat = 45.42;
+        }
+
+        return (double)lowerLat;
+    }
+
+
+    double findLefterLongitude()
+    {
+        double? lefterLongit = double.MaxValue;
+
+        foreach (var mappaTag in Model.anagrafica)
+        {
+            if (mappaTag.gps_lon < lefterLongit)
+            {
+                lefterLongit = mappaTag.gps_lon;
+            }
+        }
+
+
+        if (Model.percorsi != null && Model.percorsi.Count() > 0)
+        {
+            for (int indexPercorso = 0; indexPercorso < Model.percorsi.Count(); indexPercorso++)
+            {
+                foreach (var punto_gps in Model.percorsi.ElementAt(indexPercorso).punti_gps)
+                {
+                    double gps_lon = double.Parse(punto_gps.gps_lon.Replace(",", "."), CultureInfo.InvariantCulture);
+                    if (gps_lon < lefterLongit)
+                    {
+                        lefterLongit = gps_lon;
+                    }
+                }
+            }
+        }
+
+
+        if (lefterLongit == double.MaxValue)
+        {
+            lefterLongit = 9.10;
+        }
+
+        return (double)lefterLongit;
+    }
+
+
+    double findRighterLongitude()
+    {
+        double? righterLongit = double.MinValue;
+
+        foreach (var mappaTag in Model.anagrafica)
+        {
+            if (mappaTag.gps_lon > righterLongit)
+            {
+                righterLongit = mappaTag.gps_lon;
+            }
+
+
+        }
+
+        if (Model.percorsi != null && Model.percorsi.Count() > 0)
+        {
+            for (int indexPercorso = 0; indexPercorso < Model.percorsi.Count(); indexPercorso++)
+            {
+                foreach (var punto_gps in Model.percorsi.ElementAt(indexPercorso).punti_gps)
+                {
+                    double gps_lon = double.Parse(punto_gps.gps_lon.Replace(",", "."), CultureInfo.InvariantCulture);
+                    if (gps_lon > righterLongit)
+                    {
+                        righterLongit = gps_lon;
+                    }
+                }
+            }
+        }
+
+        if (righterLongit == double.MinValue)
+        {
+            righterLongit = 9.22;
+        }
+
+        return (double)righterLongit;
+    }
+
+    Tuple<double, double, double, double> FindBounds()
+    {
+
+        double? upperLat = double.MinValue;
+        double? lowerLat = double.MaxValue;
+        double? lefterLongit = double.MaxValue;
+        double? righterLongit = double.MinValue;
+
+        foreach (var mappaTag in Model.anagrafica)
+        {
+            if (mappaTag.gps_lat > upperLat)
+            {
+                upperLat = mappaTag.gps_lat;
+            }
+
+
+            if (mappaTag.gps_lat < lowerLat)
+            {
+                lowerLat = mappaTag.gps_lat;
+            }
+
+            if (mappaTag.gps_lon < lefterLongit)
+            {
+                lefterLongit = mappaTag.gps_lon;
+            }
+
+            if (mappaTag.gps_lon > righterLongit)
+            {
+                righterLongit = mappaTag.gps_lon;
+            }
+        }
+
+        if (Model.percorsi != null && Model.percorsi.Count() > 0)
+        {
+            for (int indexPercorso = 0; indexPercorso < Model.percorsi.Count(); indexPercorso++)
+            {
+                foreach (var punto_gps in Model.percorsi.ElementAt(indexPercorso).punti_gps)
+                {
+                    double gps_lat = double.Parse(punto_gps.gps_lat.Replace(",", "."), CultureInfo.InvariantCulture);
+                    double gps_lon = double.Parse(punto_gps.gps_lon.Replace(",", "."), CultureInfo.InvariantCulture);
+                    if (gps_lat > upperLat)
+                    {
+                        upperLat = gps_lat;
+                    }
+
+                    if (gps_lat < lowerLat)
+                    {
+                        lowerLat = gps_lat;
+                    }
+
+                    if (gps_lon < lefterLongit)
+                    {
+                        lefterLongit = gps_lon;
+                    }
+
+                    if (gps_lon > righterLongit)
+                    {
+                        righterLongit = gps_lon;
+                    }
+
+                }
+            }
+        }
+
+        if (upperLat == double.MinValue)
+        {
+            upperLat = 45.49;
+        }
+
+        if (lowerLat == double.MaxValue)
+        {
+            lowerLat = 45.42;
+        }
+
+        if (lefterLongit == double.MaxValue)
+        {
+            lefterLongit = 9.10;
+        }
+
+        if (righterLongit == double.MinValue)
+        {
+            righterLongit = 9.22;
+        }
+
+        return new Tuple<double, double, double, double>(upperLat.Value, lefterLongit.Value, lowerLat.Value, righterLongit.Value);
+
+
+    }
+
+    Tuple<string, string> CenterGeoLocation(double lat1, double lon1, double lat2, double lon2)
+    {
+        return new Tuple<string, string>(((lat1 + lat2) / 2).ToString().Replace(",", "."), ((lon1 + lon2) / 2).ToString().Replace(",", "."));
+
+
+    }
+
+}
+
+@{
+    /*double upperLatitude = findUpperLatitude();
+    double lowerLatitude = findLowerLatitude();
+    double lefterLongitude = findLefterLongitude();
+    double righterLongitude = findRighterLongitude();*/
+
+    //upperLat.Value,lefterLongit.Value,lowerLat.Value,righterLongit.Value
+    Tuple<double, double, double, double> bounds = FindBounds();
+    double upperLatitude = bounds.Item1;
+    double lowerLatitude = bounds.Item3;
+    double lefterLongitude = bounds.Item2;
+    double righterLongitude = bounds.Item4;
+}
+
+<link rel="stylesheet" href="/Scripts/leaflet-0.7/leaflet.css">
+<link rel="stylesheet" href="/Scripts/Leaflet.label/leaflet.label.css">
+
+<style>
+    .leaflet-label {
+        border: none;
+        background: #fff;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .leaflet-popup {
+        z-index: 1000;
+    }
+
+    div.db-scroll {
+        max-height: 35vh;
+    }
+
+    .css-mappa-label-operatore {
+        color: red;
+        font-size: 14px;
+    }
+</style>
+
+<div id="map"></div>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+@Scripts.Render("~/Scripts/leaflet.polylineDecorator.min.js")
+@*<script src="/Scripts/Leaflet.label/leaflet.label.js"></script>*@
+@*http://leaflet.github.io/Leaflet.label/*@
+@*questo è un plugin di leaflet che da leaflet 1 è entrato nel core di leaflet, ma la momento si usa leaflet 0.7.7*@
+<script src="http://leaflet.github.io/Leaflet.label/leaflet.label.js"></script>
+<link rel="stylesheet" href="http://leaflet.github.io/Leaflet.label/leaflet.label.css" />
+<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=9RTAu8YaKxnLa6KNaCblrn64EGkGVp4u"></script>
+
+@*<script src="../leaflet.polylineDecorator.min.js"></script>*@
+@*<script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>*@
+@*<link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />*@
+
+<script type="text/javascript">
+
+
+    /*===================attivazione oggetti geolocalizzati sulla mappa===================  */
+     var mapLayer = MQ.mapLayer();
+
+    var boundingBox = [ [
+             @upperLatitude.ToString().Replace(",", "."),@lefterLongitude.ToString().Replace(",", ".")],
+           [
+
+             @lowerLatitude.ToString().Replace(",", "."), @righterLongitude.ToString().Replace(",", ".")
+            ]]
+    ;
+
+
+    var calculatedCenterLon = @CenterGeoLocation(upperLatitude, lefterLongitude, lowerLatitude, righterLongitude).Item2;//MQ.util.getCenterFromBoundingBox(boundingBox);
+
+    var calculatedCenterLat = @CenterGeoLocation(upperLatitude, lefterLongitude, lowerLatitude, righterLongitude).Item1;
+    //L.mapquest.key = '9RTAu8YaKxnLa6KNaCblrn64EGkGVp4u';
+    //var calculatedZoom = L.mapquest.util.getZoomFromBoundingBox(boundingBox);
+    //alert(calculatedZoom);
+
+    var map = L.map('map', {
+
+      layers: mapLayer,
+      center: [ calculatedCenterLat,calculatedCenterLon ],
+      zoom: 8
+      });
+
+      L.control.layers({
+         'Map': mapLayer,
+         'Hybrid': MQ.hybridLayer(),
+         'Satellite': MQ.satelliteLayer(),
+         'Dark': MQ.darkLayer(),
+         'Light': MQ.lightLayer()
+      }).addTo(map);
+
+    L.control.scale({ "imperial": false, "maxWidth": 100 }).addTo(map);
+    //boundingBox = L.latLngBounds();
+    //se non metto questo fitBounds prima di aggiungere i punti o i percorsi non si vedono le freccette direzionali sui percorsi
+    map.fitBounds(boundingBox);
+           // map.setView([45.464211,9.191383], 11);
+      var MAPOBJ = null;
+    var ALL_BOUNDS = L.latLngBounds([[@upperLatitude.ToString().Replace(",", "."), @lefterLongitude.ToString().Replace(",", ".")], [@lowerLatitude.ToString().Replace(",", "."), @righterLongitude.ToString().Replace(",", ".")]]);
+    //map.fitBounds(ALL_BOUNDS);
+    var Mark = {};
+
+
+    map.on('contextmenu', function(event)
+    {
+        //uuid
+        var IDNUOVO =   '@ViewBag.IDNEWPARTIAL' + '_' + Math.floor(Math.random() * 1000000 + 1);
+        if (!confirm('Creo un nuovo tag ' + IDNUOVO + '\nConfermi?')) {
+            return;
+        }
+        // ---aggiunge il nuovo tag
+        var linkCreate = '@Url.Action("CreateFromAjax", "tags", null)';
+        //var resp =  ajax_hub( linkAdd , IDNUOVO, event.latlng.lat+','+event.latlng.lng  +',14' ) ;
+        var resp = JSON.parse(ajax_hub(linkCreate, IDNUOVO, event.latlng.lat + ',' + event.latlng.lng));//tolgo il ,14 che non so a cosa serve
+        //eval(resp);
+        //alert(resp);
+        //alert("SUCCESS= "+resp.success);
+        //alert("erroretag costante= "+"");
+        //se not error resp dovrebbe contenere id di tag in database
+        if (resp.success==true) {
+            Mark = L.marker(event.latlng, { draggable: true });
+            alert('COORD ' + event.latlng.lat + ',' + event.latlng.lng);
+
+            // imposta nuove coordinate TODO al momento non gestisco dragging
+            /*Mark.on('dragend', function(event) {
+                    ajax_hub( 'http://romero.adcoop.it/sviluppo_pianificazione/getsmartmobile/pagine_php/anagrafica_tag.php' , IDNUOVO, event.latlng.lat+','+ event.latlng.lng );
+                });*/
+
+            var linkEdit = '@Html.ActionLink("completa anagrafica", "Edit", "tags", null, null)';
+            var myRegexp = /href="(.+)"/g;
+            var match = myRegexp.exec(linkEdit)[1];
+            linkEdit = linkEdit.replace(match, match + '/' + resp.payload);
+
+            //var linkEdit='@Url.Action("Edit", "tags", null)' + '/' + resp;
+            var STR = '<b>Tag Nuovo - da completare</b>' + '</br>' + linkEdit;
+            //STR = STR.replace ('xxxxx',IDNUOVO );
+            Mark.bindPopup(STR);
+            Mark.addTo(map);
+        } else if (resp.payload == "@(tagsController.ERRORECLASSETAG)") {
+            alert("Errore nella selezione della Classe del Tag");
+        } else if (resp.payload == "@(tagsController.ERROREGRUPPOTAG)") {
+            alert("Errore nella selezione del Gruppo del Tag");
+        } else {
+            alert("Errore nella creazione del Tag");
+        }
+
+    });
+
+
+
+    function spostaMarker(markerLoc,tagID,Lmap,mapp,colore,links,markersInterventi) {
+        //var resp =  ajax_hub( url_contextmenu2 , id_rfid, ''  ) ;
+        //eval(resp);
+
+
+        mapp.removeLayer(Mark);
+        Mark = Lmap.marker([markerLoc.getLatLng().lat, markerLoc.getLatLng().lng], { draggable: true });
+        alert('Sposta il marker');
+
+        Mark.on('dragend', function(event) {
+            var mk = event.target;
+            alert(mk.getLatLng().lat + ',' + mk.getLatLng().lng);
+
+            //aggiorno il database(se ho i permessi. e altro?chiedere luca)
+            var linkUpdate = '@Url.Action("UpdateGpsFromAjax", "tags", null)';
+            var resp = JSON.parse(ajax_hub(linkUpdate, tagID, mk.getLatLng().lat + ',' + mk.getLatLng().lng));
+            if (resp.success == true) {
+
+
+                mapp.removeLayer(Mark);
+                mapp.removeLayer(markerLoc);
+                var newMAPOBJ = Lmap.circleMarker([mk.getLatLng().lat, mk.getLatLng().lng], { fillColor: colore, color: colore, fillOpacity: 1, weight: 1, radius: 5 });
+
+                var numInterventi = markersInterventi.length;
+
+                for (var i = 0; i < numInterventi; i++) {
+                    mapp.removeLayer(markersInterventi[i]);
+
+                }
+                var newMarkersInterventi = disegnaCerchiEsterniInterventi(Lmap, mapp, mk.getLatLng().lat, mk.getLatLng().lng, numInterventi);
+                newMAPOBJ.on('contextmenu', (function (marker, _tagID, Lm, mappp, colore, links, _markersInterventi) {
+
+                    return function () {
+
+                        spostaMarker(marker, _tagID, Lm, mappp, colore, links, _markersInterventi);
+                    }
+                })(newMAPOBJ, tagID, Lmap, mapp, colore, links, newMarkersInterventi)
+                    );
+
+                newMAPOBJ.bindPopup(links);
+
+
+                newMAPOBJ.addTo(mapp);
+
+            } else {
+                mapp.removeLayer(Mark);
+                alert(resp.errorMessage);
+            }
+
+            //event2.target.setLatLng(mk.getLatLng().lat, mk.getLatLng().lng);
+            //ajax_hub( url_contextmenu , id_rfid, mk.getLatLng().lat+','+mk.getLatLng().lng    );
+        });
+        Mark.addTo(mapp);
+    }
+
+    function disegnaCerchiEsterniInterventi(Lmap,map,lat, lng, numInterventi) {
+        let interventiArray = [];
+        for (var i = 0; i < numInterventi;i++) {
+            var cerchioInterventi = Lmap.circleMarker([lat, lng], {
+            radius: 8+4*i,
+
+                fillOpacity: 0,
+                /*fillColor: '#0000ff',*/
+                color: '#000000',
+               weight: 2
+
+            });
+        cerchioInterventi.addTo(map);
+        interventiArray.push(cerchioInterventi);
+    }
+        return interventiArray;
+    }
+
+    function disegnaSegnalazione(Lmap, map, lat, lng,operatore, anchorSegnalazioni, colore) {
+        let MAPSEGNOBJ = Lmap.circleMarker([lat, lng], { fillColor: colore, color: colore, fillOpacity: 1, weight: 1, radius: 8, contextmenu: false });
+        let links  = '<b>' + operatore + '</b>' + '</br>' + anchorSegnalazioni;
+        MAPSEGNOBJ.bindPopup(links);
+
+        MAPSEGNOBJ.addTo(map);
+    }
+
+    function disegnaPunti(Lmap, map, tagID, lat, long, gruppo, anchorTagDetails, anchorSegnalazioni, anchorInterventiOppureAttivita, itemId, colore, numInterventi) {
+        //alert(colore);
+        var MAPOBJ = Lmap.circleMarker([lat, long], { fillColor: colore, color: colore, fillOpacity: 1, weight: 1, radius: 5, contextmenu: true });
+        //una soluzione alternativa puramente leaflet che non usa plugin leaflet.lable è in MAGARI PROVARE
+        //https://gis.stackexchange.com/questions/182880/leaflet-js-add-text-to-circles
+        //(non è solo per circles)
+        //COMUNQUE dicono
+        //https://github.com/Leaflet/Leaflet.label
+        //NOTE: starting with Leaflet 1.0, L.Label is added to Leaflet core as L.Tooltip and this plugin is deprecrated.
+        //am al momento ho usato leaflet 0.7.7 e non saprei quanto andrebbe cambiato
+        //MAPOBJ.bindLabel("100", { direction: 'auto',noHide: true, }).addTo(map);
+        //const myCustomColour = '#583470'
+        //left: -1rem;
+        //top: -1rem;
+        /* let markerHtmlStyles = `
+   background-color: ${colore};
+   width: 2rem;
+   height: 2rem;
+   display: block;
+
+   position: relative;
+   border-radius: 2rem 2rem 0;
+   transform: rotate(45deg);
+   border: 1px solid #FFFFFF`
+         let myIcon = Lmap.divIcon({
+   className: '',
+   iconAnchor: [0, 0],
+   labelAnchor: [0, 0],
+   popupAnchor: [0, -36],
+   html: `<span style="${markerHtmlStyles}" />`
+})
+         var MAPOBJ = Lmap.marker([lat, long], { icon: myIcon, draggable: true });*/
+        //se cisono degli itnerventi su quel tag ci metto dei cerchi attorno
+        let interventiArray = disegnaCerchiEsterniInterventi(Lmap,map, lat, long, numInterventi);
+        /*for (var i = 0; i < numInterventi;i++) {
+            var cerchioInterventi = Lmap.circleMarker([lat, long], {
+                radius: 8+4*i,
+
+                fillOpacity: 0,
+
+                color: '#000000',
+                weight: 2
+
+            });
+            cerchioInterventi.addTo(map);
+            interventiArray.push(cerchioInterventi);
+        }*/
+
+
+        /*MAPOBJ.on('contextmenu', function recursive(event2)
+        {
+
+            //var resp =  ajax_hub( url_contextmenu2 , id_rfid, ''  ) ;
+            //eval(resp);
+            //alert(msg_contextmenu);
+            Mark = Lmap.marker( [event2.latlng.lat, event2.latlng.long], {draggable:true});
+            Mark.on('dragend', function(event) {
+                var mk = event.target;
+                alert(mk.getLatLng().lat + ',' + mk.getLatLng().lng);
+                map.removeLayer(Mark);
+                map.removeLayer(event2.target);
+                var newMAPOBJ = Lmap.circleMarker([mk.getLatLng().lat, mk.getLatLng().lng], { fillColor: colore, color: colore, fillOpacity: 1, weight: 1, radius: 5 });
+                 if (anchorSegnalazioni === null) {
+                    newMAPOBJ.bindPopup('<b>' + gruppo + '</b>' + '</br>' + anchorTagDetails + '</br>' + anchorInterventiOppureAttivita );
+                }
+                else {
+                    newMAPOBJ.bindPopup('<b>' + gruppo + '</b>' + '</br>' + anchorTagDetails + '</br>' + anchorInterventiOppureAttivita + '</br>' + anchorSegnalazioni);
+                }
+
+                newMAPOBJ.on('contextmenu', recursive);
+
+                newMAPOBJ.addTo(map);
+
+                //event2.target.setLatLng(mk.getLatLng().lat, mk.getLatLng().lng);
+               //ajax_hub( url_contextmenu , id_rfid, mk.getLatLng().lat+','+mk.getLatLng().lng    );
+             });
+             Mark.addTo(map);
+        });*/
+
+        var links = "";
+        if (anchorSegnalazioni === null) {
+            links='<b>' + gruppo + '</b>' + '</br>' + anchorTagDetails + '</br>' + anchorInterventiOppureAttivita ;
+        }
+        else {
+            links='<b>' + gruppo + '</b>' + '</br>' + anchorTagDetails + '</br>' + anchorInterventiOppureAttivita + '</br>' + anchorSegnalazioni;
+        }
+
+        MAPOBJ.on('contextmenu', (function (marker,_tagID, Lm, mapp,colore,links,markersInterventi) {
+
+            return function () {
+
+                spostaMarker(marker,_tagID, Lm, mapp,colore,links,markersInterventi);
+            }
+        })(MAPOBJ,tagID,Lmap,map,colore,links,interventiArray)
+        );
+
+
+        MAPOBJ.bindPopup(links );
+
+
+        /*MAPOBJ.options.contextmenuItems = [{
+            text: 'Show Charts',
+            callback: (function (marker, Lm, mapp) {
+                //alert("ciao");
+                return function () {
+                    alert("ciao");
+                    //spostaMarker(marker, Lm, mapp);
+                }
+            })(MAPOBJ,Lmap,map)
+        }];*/
+
+
+
+        MAPOBJ.addTo(map);
+        if (itemId == @ViewBag.SelectedId) {
+            //alert(itemId);
+            //MAPOBJ.fire('click');
+            MAPOBJ.openPopup();
+        }
+
+
+
+
+
+        /*Lmap.circleMarker([lat, long], {
+           radius: 2,
+           draggable: true,
+            color: '#ff0000',
+             fillOpacity: 1,
+           fillColor: '#0000ff',
+           weight: 1
+           }).addTo(map);*/
+
+
+    }
+
+     @{
+         List<string> colori = new List<string>() { "red", "green", "yellow" };
+    }
+    @functions{
+
+        string nomeLinea(int k)
+        {
+            return "linea" + k;
+        }
+
+        string nomeArrLinea(int k)
+        {
+            return "arr_linea" + k;
+        }
+
+        string nomeDecorator(int k)
+        {
+            return "decorator" + k;
+        }
+
+        //MAGARI QUESTO E GETBOUNDS FARLI NEL CONTROLLER....
+        //volendo anche
+        //https://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-javascript
+        string computeColore(int k,int numeroPercorsi)
+        {
+            Random random = new Random();
+            //16777215 è ffffff in decimale
+            int num = 0;
+            string hexString = "";
+            do
+            {
+                num = random.Next((int)Math.Floor((double)16777215 / numeroPercorsi * (k)), (int)Math.Ceiling((double)16777215 / numeroPercorsi * (k + 1)));
+                hexString = num.ToString("X");
+                //per evitare i grigi, ma potrei metodo apposito migliore per evitare colori chiari, verdi chiari(che sono anche nella mappa) etc
+            } while (Regex.Match(hexString, @"([0-9abcdef][0-9abcdef])\1{2}").Success);
+            return hexString;
+        }
+
+        string computeColore(string operatore)
+        {
+            string hash = CalculateMD5Hash(operatore);
+            return hash.Substring(0, 6);
+        }
+
+
+        public string CalculateMD5Hash(string input)
+        {
+            // step 1, calculate MD5 hash from input
+            MD5 md5 = System.Security.Cryptography.MD5.Create();
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+            byte[] hash = md5.ComputeHash(inputBytes);
+
+            // step 2, convert byte array to hex string
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
+    }
+
+    //ci vuole questo if o chiama Model.percorsi.Count() anche quando Model.percorsi è null
+    @if (ViewBag.percorsi) {
+        @:function disegnaPercorsi(Lmap, map, coordinate) {
+            // aggiunge la linea0 del percorso
+            for (int i = 0; i < Model.percorsi.Count(); i++) {
+        @:var @nomeArrLinea(i) = @creaListaDiPuntiGpsPercorso(i);
+        @:var @nomeLinea(i) = Lmap.polyline( @nomeArrLinea(i) , { color: '#@(computeColore( Model.percorsi.ElementAt(i).operatore))' });
+        
+        @:@(nomeLinea(i)).bindLabel('@("operatore: " + Model.percorsi.ElementAt(i).operatore)', { direction: 'auto' }).addTo(map);
+
+            // -----------------------
+            // aggiunge una decorazione
+        @:var @(nomeDecorator(i)) = Lmap.polylineDecorator(@nomeLinea(i), {
+        @:     patterns: [
+        @:        { offset: '10%', repeat: '100m', symbol: new Lmap.Symbol.ArrowHead({ pixelSize: 10, polygon: false, pathOptions: { stroke: true, weight: 3 } }) }
+        @:    ]
+        @:});
+        @:@(nomeDecorator(i)).addTo(map);
+        //  {offset: '10%', repeat: '200m', symbol: new L.Symbol.ArrowHead({pixelSize: 15, pathOptions: {fillOpacity: 0.5, weight: 2}})}
+
+            // -----------------------
+            // aggiunge l'etichetta al percorso(dovrebbe essere sempre presente ma non mi viene, adesso credo si usi
+            // bindlabel come qui sopra)
+        @*@:var lab = new Lmap.Label({ className: 'css-mappa-label-operatore' });*@
+        @*.css-mappa-label-operatore { color:red !important; font-size:14px !important;}*@
+        @*@:lab.options.className = 'css-mappa-label-operatore';*@
+
+        //+@*@Model.punti_gps.ElementAt(0).operatore);*@
+        @*@:lab.setContent('operatore: ');*@
+
+        //if ('[45.60954,8.94029]' == '')
+        @*@(nomeLinea(i)).getBounds().getCenter());*@
+        @*@:lab.setLatLng(L.latLng([45,9]));*@
+
+        /*else
+        lab.setLatLng(L.latLng([45.60954,8.94029]));*/
+        @*@:Lmap.showLabel(lab);*@
+        @*@:ALL_BOUNDS.extend((@nomeLinea(i)).getBounds());*@
+        }
+        @:}
+        }
+
+        @foreach (var item in Model.anagrafica)
+    {
+            @:var lat = @item.gps_lat.ToString().Replace(",", ".");
+            @:var longit = @item.gps_lon.ToString().Replace(",", ".");
+
+
+
+
+            @*if (ViewBag.interventi && ViewBag.segnalazioni)
+        {
+            if (item.segnalazioni)
+            {
+                    @:disegnaPunti(L, map, '@item.id', lat, longit, '@item.tag_gruppo', '@Html.ActionLink("vedi anagrafica", "Details", "tags", new { id = item.id }, null)', '@Html.ActionLink("segnalazioni", "Index", "segnalaziones", new { id_tag = item.id, data = Model.Start.Value.Date.ToString("yyyy-MM-dd") }, null)', '@Html.ActionLink("vedi interventi", "Index", "interventoes", new { cod_uuidSelected = item.cod_uuid, id_operatoreSelected = item.id_operatore, data_inizio = Model.Start.Value.Date.ToString("yyyy-MM-dd"), data_fine = Model.Start.Value.Date.ToString("yyyy-MM-dd") }, null)',@item.id, '@item.coloreGruppo',@item.numInterventi);
+
+            }
+            else
+            {
+                    @:disegnaPunti(L, map,'@item.id', lat, longit, '@item.tag_gruppo', '@Html.ActionLink("vedi anagrafica", "Details", "tags", new { id = item.id }, null)', null,'@Html.ActionLink("vedi interventi", "Index", "interventoes", new { cod_uuidSelected = item.cod_uuid, id_operatoreSelected = item.id_operatore, data_inizio = Model.Start.Value.Date.ToString("yyyy-MM-dd"), data_fine = Model.Start.Value.Date.ToString("yyyy-MM-dd") }, null)',@item.id,'@item.coloreGruppo',@item.numInterventi);
+
+            }
+        }
+        else if (!ViewBag.interventi)
+        {
+            if (!item.segnalazioni && !ViewBag.segnalazioni)
+            {
+                    @:disegnaPunti(L, map,'@item.id', lat, longit, '@item.tag_gruppo', '@Html.ActionLink("vedi anagrafica", "Details", "tags", new { id = item.id }, null)', null, '@Html.ActionLink("vedi attivita", "Index", "ricogniziones", new { cod_uuid = item.cod_uuid }, null)',@item.id, '@item.coloreGruppo');
+            }
+            else if (item.segnalazioni && ViewBag.segnalazioni)
+            {
+
+                    @:disegnaPunti(L, map,'@item.id', lat, longit, '@item.tag_gruppo', '@Html.ActionLink("vedi anagrafica", "Details", "tags", new { id = item.id }, null)', '@Html.ActionLink("segnalazioni", "Index", "segnalaziones", new { id_tag = item.id, data = Model.Start.Value.Date.ToString("yyyy-MM-dd") }, null)','@Html.ActionLink("vedi interventi", "Index", "interventoes", new { cod_uuidSelected = item.cod_uuid, id_operatoreSelected = item.id_operatore, data_inizio = Model.Start.Value.Date.ToString("yyyy-MM-dd"), data_fine = Model.Start.Value.Date.ToString("yyyy-MM-dd") }, null)',@item.id,'@item.coloreGruppo');
+
+
+            }
+        }*@
+
+            if (ViewBag.interventi) {
+                    @:disegnaPunti(L, map, '@item.id', lat, longit, '@item.tag_gruppo', '@Html.ActionLink("vedi anagrafica", "Details", "tags", new { id = item.id }, new { target = "_blank" })', null, '@Html.ActionLink("vedi interventi", "Index", "interventoes", new { cod_uuidSelected = item.cod_uuid, id_operatoreSelected = item.id_operatore, data_inizio = Model.Start.Value.Date.ToString("yyyy-MM-dd"), data_fine = Model.Start.Value.Date.ToString("yyyy-MM-dd") }, new { target = "_blank" })',@item.id, '@item.coloreGruppo',@item.numInterventi);
+                    @:ALL_BOUNDS.extend([ [lat, longit] ]);
+
+        }
+        else
+        {
+                 @:disegnaPunti(L, map, '@item.id', lat, longit, '@item.tag_gruppo', '@Html.ActionLink("vedi anagrafica", "Details", "tags", new { id = item.id },  new { target = "_blank" })', null, '@Html.ActionLink("vedi attivita", "Index", "ricogniziones", new { cod_uuid = item.cod_uuid },  new { target = "_blank" })',@item.id, '@item.coloreGruppo');
+                 @:ALL_BOUNDS.extend([ [lat, longit] ]);
+        }
+            @*'@Html.ActionLink("vedi anagrafica", "Details", "tags", new { id = item.id }, null)');*@
+
+        }
+
+    @if (Model.segnalazioni != null) {
+        foreach (var item in Model.segnalazioni)
+        {
+            @:var lat = @item.gps_lat.ToString().Replace(",", ".");
+            @:var longit = @item.gps_lng.ToString().Replace(",", ".");
+            @:disegnaSegnalazione(L, map, lat, longit, '@item.operatore.nome', '@Html.ActionLink("vedi segnalazione", "Details", "segnalaziones", new { id = item.id_segnalazione }, new { target = "_blank" })', '#ff0000');
+            @:ALL_BOUNDS.extend([ [lat, longit] ]);
+
+        }
+    }
+
+    //map.fitBounds(ALL_BOUNDS);
+
+    @if (ViewBag.percorsi)
+    {
+            @:disegnaPercorsi(L, map);
+    }
+
+
+     //************************************PIATTAFORMA DROPDOWN ON CHANGE
+        @{
+            if (Context.User.IsInRole(ApplicationRoleManager.ADMIN))
+            {
+                <text>
+                    function CliccaActionLinkFiltraAndSortAjax(urlaction,piattaforma='') {
+
+        //$('#mioEditorForDateInizio').val()
+        //alert("piattaforma= " + piattaforma + " urlaction= " + urlaction);
+
+
+        // invia la richiesta
+        var char_sep = '?';
+        if (urlaction.indexOf(char_sep) > 0) {
+            char_sep = '&';
+        }
+
+        //var url = urlaction + char_sep + "piattaformaDrop=" + piattaforma + "&ajax_req2=ajax_req2";
+        //alert("procedura Ajax invocata da " + id + "\n per " + urlaction + "\n url= " + url);
+        var url = urlaction + char_sep + "id_piattaforma=" + piattaforma ;
+
+
+        var xmlhttp;
+        if (window.XMLHttpRequest)
+            xmlhttp = new XMLHttpRequest();
+        // -----------------------------
+
+
+        //al momento non so in quali casi usare sincrona o asincrona
+        //GET perchè non modifica
+        if (urlaction.indexOf('Mappa/FiltraPiattaformaDropDownAjax') != -1) {
+            //alert(url);
+            // sincrona --------------
+            xmlhttp.contentType = 'application/json';
+            xmlhttp.a = 'application/json';
+            xmlhttp.reponseType = 'json';
+            xmlhttp.overrideMimeType("application/json");
+            xmlhttp.processData = true;
+            xmlhttp.open("GET", url, false /*SINCRONA */);
+            xmlhttp.send();
+            return xmlhttp.response;//response al posto di repsonseText perche adesso è un json
+        }
+        return false;
+
+    }
+                </text>
+            }
+        }
+
+
+        //************************************FINE PIATTAFORMA DROPDOWN ON CHANGE
+
+
+
+
+
+
+        // -----------------------------
+        function ajax_hub(script, id, valore)
+    // -----------------------------
+    {
+        // -----------------------------
+        // apre l'oggetto di richiesta
+        var xmlhttp;
+        if (window.XMLHttpRequest)
+            xmlhttp = new XMLHttpRequest();
+        // -----------------------------
+
+        // invia la richiesta
+        var char_sep = '?';
+        if (script.indexOf(char_sep) > 0)
+            char_sep = '&';
+
+        var url = script + char_sep + "ajax_req=" + id + "&ajax_val=" + valore;
+        alert("procedura Ajax invocata da "+id+"\n per "+script+"\n url. "+url);
+
+        //al momento non so in quali casi usare sincrona o asincrona
+        //provo a cambiare GET con POST perchè inserisce ovvero modifca(tipo come in REST)
+        if (script.indexOf('tags/UpdateGpsFromAjax') != -1) {
+            // sincrona --------------
+            xmlhttp.contentType = 'application/json';
+            xmlhttp.a = 'application/json';
+            xmlhttp.reponseType = 'json';
+            xmlhttp.overrideMimeType("application/json");
+            xmlhttp.processData = true;
+            xmlhttp.open("POST", url, false /*SINCRONA */);
+            xmlhttp.send();
+            return xmlhttp.response;//response al posto di repsonseText perche adesso è un json
+        }
+        else {  // asincrona --------------------- AL MOMENTO NON USATA
+            xmlhttp.contentType = 'application/json';
+            xmlhttp.reponseType = 'json';
+            xmlhttp.overrideMimeType("application/json");
+            xmlhttp.processData = true;
+            xmlhttp.open("GET", url, true /* A-SINCRONA */);
+            ////////////////////////////////////////////////
+            xmlhttp.onreadystatechange = function () //{ ajax_response(nome); } ;
+        {
+
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    //                     alert("risposta Ajax "+nome+" - "+xmlhttp.responseText);
+                    if (script.indexOf('anagrafica_tag') != -1) {
+                        console.log("Cestino \nURL" + url + "\nRESPONSE" + xmlhttp.responseText);
+                        if (xmlhttp.responseText.indexOf('ok') != -1)
+                            alert("Punto  " + id + " aggiornato alle nuove coordinate");
+                        else
+                            alert("Punto " + id + " NON spostabile");
+                    }
+                    //console.log ("xmlhttp.responseText" +script +"     " +xmlhttp.responseText);
+                    if (script.indexOf('dati_interventi') != -1) {
+                        //console.log ("xmlhttp.responseText" + xmlhttp.responseText);
+                        return xmlhttp.response;
+                    }
+                }
+            }
+            ////////////////////////////////////////////////
+            xmlhttp.send();
+        }
+    }
+
+    @*questo va messo in document perchè se lo metto in window.onload le checkbox vanno ma il codice sotto(caricamento ajax di tendine) no*@
+    document.onload = function () {
+        @{
+             <text>
+                //di default la checkbox di aspnetmvc ha val true ma non è checked, a me serve che sia coerente
+                    //https://stackoverflow.com/questions/14730746/getting-checkbox-value-in-asp-net-mvc-4
+
+                $('#ShowInterventi').prop('checked', @ViewBag.interventi).change();
+                $('#ShowSegnalazioni').prop('checked', @ViewBag.segnalazioni).change();
+                $('#ShowPercorsi').prop('checked', @ViewBag.percorsi).change();
+                //alert(document.getElementById('ShowInterventi').getAttribute('checked'));
+            </text>
+        }
+    }
+
+    window.onload = function () {
+
+
+        @{
+            //$('#ShowInterventi').data('CurrentValue',@ViewBag.interventi);
+            //$('#ShowInterventi').attr('data-CurrentValue', @ViewBag.interventi);
+
+
+            if (Context.User.IsInRole(ApplicationRoleManager.ADMIN))
+            {
+                <text>
+        //inizializzo il data di id_piattaforma
+        $('#idPiattaformaDrop').data('current', $('#idPiattaformaDrop').val());
+        //per caricare le dropdownlist di area(gruppo) e di tipologia(classe) in base alla piattaforma scelta
+        $('#idPiattaformaDrop').on("change", function () {
+
+                    var listeJson = JSON.parse(CliccaActionLinkFiltraAndSortAjax('@Url.Action("FiltraPiattaformaDropDownAjax", "Mappa", null)', $("#idPiattaformaDrop").val()));
+                    if (listeJson.success == true) {
+                        if (listeJson.selectgruppi.length > 0) {
+                    $('#id_tag_gruppo').html('');
+                            var options = '';
+                            options += '<option value="">All</option>';
+                            for (var i = 0; i < listeJson.selectgruppi.length; i++) {
+                                options += '<option value="' + listeJson.selectgruppi[i].Id + '">' + listeJson.selectgruppi[i].Nome + '</option>';
+                                //options += '<option>' + listeJson.selectgruppi[i] + '</option>';
+                            }
+                    $('#id_tag_gruppo').append(options);
+                        }
+                        else {
+                    $('#id_tag_gruppo').html('');
+                            var options = '';
+                            options += '<option value="">All</option>';
+                    $('#id_tag_gruppo').append(options);
+                        }
+
+                        if (listeJson.selectclassi.length > 0) {
+                    $('#id_tag_classe').html('');
+                            var options = '';
+                            options += '<option value="">All</option>';
+                            for (var i = 0; i < listeJson.selectclassi.length; i++) {
+                                options += '<option value="' + listeJson.selectclassi[i].Id + '">' + listeJson.selectclassi[i].Nome + '</option>';
+                            }
+                    $('#id_tag_classe').append(options);
+                        }
+                        else {
+                    $('#id_tag_classe').html('');
+                            var options = '';
+                            options += '<option value="">All</option>';
+                    $('#id_tag_classe').append(options);
+                        }
+
+                        if (listeJson.selectoperatori.length > 0) {
+                    $('#id_operatore').html('');
+                            var options = '';
+                            options += '<option value="">All</option>';
+                            for (var i = 0; i < listeJson.selectoperatori.length; i++) {
+                                options += '<option value="' + listeJson.selectoperatori[i].Id + '">' + listeJson.selectoperatori[i].Nome + '</option>';
+                                //options += '<option>' + listeJson.selectgruppi[i] + '</option>';
+                            }
+                    $('#id_operatore').append(options);
+                        }
+                        else {
+                    $('#id_operatore').html('');
+                            var options = '';
+                            options += '<option value="">All</option>';
+                    $('#id_operatore').append(options);
+                        }
+
+                    @* https://stackoverflow.com/questions/3963855/jquery-how-to-undo-a-select-change*@
+                $.data(this, 'current', $(this).val());
+                    }
+                    else {
+                $(this).val($.data(this, 'current'));
+                        alert(listeJson.errorMessage);
+                    }
+
+                });
+
+                </text>
+            }
+        }
+        /*L.mapquest.key = '9RTAu8YaKxnLa6KNaCblrn64EGkGVp4u';*///chiave di romero versione usata da luca CHIEDERE SE USARE O FARE NUOVA
+        //magari per il bound box(ci sono link ma pagina non porprio esplicita)
+        //https://developer.mapquest.com/forum/set-map-show-all-markers
+        //https://developer.mapquest.com/documentation/mapquest-js/v1.3/l-mapquest-util/
+        //https://blogs.msdn.microsoft.com/timlee/2010/07/30/using-functions-in-an-asp-net-page-with-razor-syntax/
+        var boundingBox = {
+            'ul': {
+            'lng': @findLefterLongitude().ToString().Replace(",", "."),
+                'lat': @findUpperLatitude().ToString().Replace(",", ".")
+        },
+            'lr': {
+            'lng': @findRighterLongitude().ToString().Replace(",", "."),
+                'lat': @findLowerLatitude().ToString().Replace(",", ".")
+        }
+    }
+
+    var calculatedCenter = L.mapquest.util.getCenterFromBoundingBox(boundingBox);
+    var calculatedZoom = L.mapquest.util.getZoomFromBoundingBox(boundingBox);
+
+        @*var mapLayer = MQ.mapLayer();
+
+              var map = L.mapquest.map('map', {
+
+
+                          center: calculatedCenter,
+                          layers: mapLayer,//L.mapquest.tileLayer('map'),
+                          zoom: 14//calculatedZoom
+                      });
+
+               L.control.layers({
+               'Map': mapLayer,
+               'Hybrid': MQ.hybridLayer(),
+               'Satellite': MQ.satelliteLayer(),
+               'Dark': MQ.darkLayer(),
+               'Light': MQ.lightLayer()
+            }).addTo(map);
+
+    L.control.scale( {"imperial":false,"maxWidth": 100} ).addTo(map);
+
+    map.setView([45.464211, 9.191383], 11);
+
+              var ALL_BOUNDS = L.latLngBounds([ [@findUpperLatitude().ToString().Replace(",", "."), @findLefterLongitude().ToString().Replace(",", ".")],[@findLowerLatitude().ToString().Replace(",", "."),@findRighterLongitude().ToString().Replace(",", ".") ] ]);*@
+
+        //  var mapLayer = MQ.mapLayer();
+
+        //var map = L.map('map', {
+        //  layers: mapLayer,
+        //  center: [ 45.46347, 9.19404 ],
+        //  zoom: 14
+       //});
+
+        //L.control.layers({
+        //   'Map': mapLayer,
+        //   'Hybrid': MQ.hybridLayer(),
+        //   'Satellite': MQ.satelliteLayer(),
+        //   'Dark': MQ.darkLayer(),
+        //   'Light': MQ.lightLayer()
+        //}).addTo(map);
+
+        //L.control.scale( {"imperial":false,"maxWidth": 100} ).addTo(map);
+
+        //      map.setView([45.464211,9.191383], 11);
+        //var MAPOBJ = null;
+        //var ALL_BOUNDS = L.latLngBounds([ [45.4439, 9.0893],[45.4438, 9.0893] ]);
+
+
+
+
+        @*var map = L.mapquest.map('map', {
+            center: [@Model.ElementAt(0).gps_lat.ToString().Replace(",", "."),@Model.ElementAt(0).gps_lon.ToString().Replace(",", ".")],
+            layers: L.mapquest.tileLayer('map'),
+            zoom: 6
+            });*@
+
+
+        //L.marker([39.7392, -104.9903], {
+        //  icon: L.mapquest.icons.marker(),
+        //  draggable: false
+        //  }).bindPopup('Denver, CO').addTo(map);
+
+
+
+
+
+    }
+
+</script>
+
+@*string.Empty cosi al cerca non selelziona nessun id, altrimenti nell'action filtra sul gruppo dell'id, uso empty per non prende null*@
+@*, new { @class = "map-selection" }))*@
+
+@using (Html.BeginForm("Index", "Mappa", FormMethod.Get, new { @class = "map-selection" }))
+{
+    <div class="row">
+        @{
+            if (Context.User.IsInRole(ApplicationRoleManager.ADMIN))
+            {
+                <div style="display: inline-block">
+                    Piattaforma: @Html.DropDownList("idPiattaformaDrop", (SelectList)ViewBag.piattaformaDrop, "All", new { @id = "idPiattaformaDrop" })
+                </div>
+            }
+        }
+
+        @*Classe: @Html.DropDownList("classeType", "All")*@
+        <div style="display: inline-block">
+            Tipo: @Html.DropDownList("id_tag_classe", (SelectList)ViewBag.classeType, "All", new { @id = "id_tag_classe" })
+        </div>
+        <div style="display: inline-block">
+            Area: @Html.DropDownList("id_tag_gruppo", (SelectList)ViewBag.gruppoType, "All", new { @id = "id_tag_gruppo" })
+        </div>
+        <div style="display: inline-block">
+            Operatore: @Html.DropDownList("id_operatore", (SelectList)ViewBag.operatoreType, "All", new { @id = "id_operatore" })
+        </div>
+        <div style="display: inline-block">
+            Interventi: @Html.CheckBox("ShowInterventi", (bool)ViewBag.interventi, new { @onclick = "ClickCheckBoxInterventi()" })
+        </div>
+        <div style="display: inline-block">
+            <div style="display: inline-block">
+                Segnalazioni: @Html.CheckBox("ShowSegnalazioni", (bool)ViewBag.segnalazioni, new { @onclick = "ClickCheckBoxSegnalazioni()" })
+            </div>
+            <div style="display: inline-block">
+                Percorsi: @Html.CheckBox("ShowPercorsi", (bool)ViewBag.percorsi, new { @onclick = "ClickCheckBoxPercorsi()" })
+            </div>
+            <div style="display: inline-block">
+                Data Inizio:
+                @if (Model.Start.HasValue && Model.Start.Value.ToShortDateString() != "01/01/0001")
+                {
+                    @*@Html.EditorFor(model => DateTime.Now, null, new { htmlAttributes = new { @class = "form -control", @Value = (@ViewBag!=null && @ViewBag.searchDataInizio!=null)? @ViewBag.searchDataInizio:DateTime.Now } })*@
+                    @*@Html.EditorFor(model => model.Start, new { htmlAttributes = new { @class = "form-control" } })*@
+                    @Html.EditorFor(model => model.Start, new { htmlAttributes = new { @class = "form-control", @id = "mioEditorForDateInizio" } })
+                    @*@Html.TextBox("searchDataInizio", null, new { @class = "form-control date-picker" })*@
+                    @Html.ValidationMessageFor(model => model.Start, "", new { @class = "text-danger" })
+                }
+                else
+                {
+                    Model.Start = DateTime.Today.AddDays(-1);/*Convert.ToDateTime("01/01/2000");*/
+                    @Html.EditorFor(model => model.Start, new { htmlAttributes = new { @class = "form-control", @id = "mioEditorForDateInizio" } })
+                    @*@Html.TextBoxFor(model => model.Start, new { htmlAttributes = new { @class = "form-control" } })*@
+                    @Html.ValidationMessageFor(model => model.Start, "", new { @class = "text-danger" })
+                }
+            </div>
+            @Html.ActionLink("Filtra", "Index", "Mappa", null, new { @id = "miosubmit", onclick = " return CliccaActionLink()", @class = "btn" })
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    //compatibilita di ecmascript 6 con vari browser
+    //https://kangax.github.io/compat-table/es6/
+    function CliccaActionLink() {
+        //$("#Start").val( $("#Start").val() );
+        //document.forms[0].submit();
+
+        //e.preventDefault();
+        //queste 2 righe sotto vanno ma in link non viene index(che però sarà di default quindi va comunque enon è un problema)
+        //alert($("#miosubmit").attr('href') + '?searchDataInizio=' + $('#mioEditorForDate').val());
+        //ANche se viene chiamato in vari punti lascio href di miosubmit che è quello di questa pagina
+        window.location.href = $("#miosubmit").attr('href') + '?searchDataInizio=' + $('#mioEditorForDateInizio').val() +
+            '&' + 'id_tag_gruppo=' + $('#id_tag_gruppo').val() +
+            '&' + 'id_tag_classe=' + $('#id_tag_classe').val() +
+            '&' + 'ShowInterventi=' + $('#ShowInterventi').prop('checked') +
+            '&' + 'ShowSegnalazioni=' + $('#ShowSegnalazioni').prop('checked') +
+            '&' + 'ShowPercorsi=' + $('#ShowPercorsi').prop('checked') +
+            '&' + 'id_operatore=' + $('#id_operatore').val() +
+            '&' + 'idPiattaformaDrop=' + $('#idPiattaformaDrop').val();
+
+        //cosie link in pagina viene /pianificaziones ma $(this).attr('href') fa /pianificaziones/undefined?searchDataInizio= etc
+        //window.location.href = $(this).attr('href') + '?searchDataInizio=' + $('#mioEditorForDate').val();
+        return false;
+
+    }
+
+    function ClickCheckBoxInterventi() {
+        //$('#ShowInterventi').val(!$('#ShowInterventi').val());
+        //$('#ShowInterventi').val(""+!$('#ShowInterventi').data('CurrentValue'));
+        //alert("val " + $('#ShowInterventi').val() + "data " + ($('#ShowInterventi').data('CurrentValue')) + " attr " + $('#ShowInterventi').attr('data-CurrentValue'));
+        //$('#ShowInterventi').prop('checked');
+        //alert(document.getElementById('ShowInterventi').getAttribute('checked')+" prop "+ $('#ShowInterventi').prop('checked'));
+        //$('#ShowInterventi').data('CurrentValue', "" + !$('#ShowInterventi').val());//(!$('#ShowInterventi').attr('data-CurrentValue')));
+        //$('#ShowInterventi').attr('data-CurrentValue', (!$('#ShowInterventi').attr('data-CurrentValue')));
+        //$('#ShowInterventi').val($('#ShowInterventi').data('CurrentValue'));
+        //$('#ShowInterventi').prop('checked',!(/true/i).test(document.getElementById('ShowInterventi').getAttribute('checked')));
+        //alert("val "+$('#ShowInterventi').val()+" data  "+$('#ShowInterventi').data('CurrentValue')+" attr "+$('#ShowInterventi').attr('data-CurrentValue'));
+        //alert(document.getElementById('ShowInterventi').getAttribute('checked')+" prop "+$('#ShowInterventi').prop('checked'));
+    }
+
+    function ClickCheckBoxSegnalazioni() {
+    }
+
+    function ClickCheckBoxPercorsi() {
+    }
+</script>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+@*<script type='text/javascript'>
+        $(function () {
+            $('.date-picker').datepicker();
+        })
+    </script>*@
