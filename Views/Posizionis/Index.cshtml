@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css">
 <script src="http://leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
 <script src="https://cdn.rawgit.com/hayeswise/Leaflet.PointInPolygon/v1.0.0/wise-leaflet-pip.js"></script>
-<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=9RTAu8YaKxnLa6KNaCblrn64EGkGVp4u"></script>
+@*<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=9RTAu8YaKxnLa6KNaCblrn64EGkGVp4u"></script>*@
 <script src="https://api.mqcdn.com/sdk/mapquest-gl-js/v0.4.0/mapquest-gl.js"></script>
 <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-gl-js/v0.4.0/mapquest-gl.css" />
 <p>
@@ -158,7 +158,7 @@
 
     var puntijs = [@puntiStr];// ponte da C# a javascript
     console.log(puntijs);
-    var mapLayer = MQ.mapLayer();
+    //var mapLayer = MQ.mapLayer();
     var mymap = L.map('mapid').setView(puntijs[0], 13);
     var map = mymap;
     //var OsmLayer = new OpenLayers.Map("Mappa");
@@ -166,13 +166,13 @@
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
         maxZoom: 18,
     }).addTo(mymap);
-    L.control.layers({
-         'Map': mapLayer,
-         'Hybrid': MQ.hybridLayer(),
-         'Satellite': MQ.satelliteLayer(),
-         'Dark': MQ.darkLayer(),
-         'Light': MQ.lightLayer()
-      }).addTo(map);
+    //L.control.layers({
+    //     'Map': mapLayer,
+    //     'Hybrid': MQ.hybridLayer(),
+    //     'Satellite': MQ.satelliteLayer(),
+    //     'Dark': MQ.darkLayer(),
+    //     'Light': MQ.lightLayer()
+    //  }).addTo(map);
 
     //var geojson = {
     //  type: 'FeatureCollection',
@@ -227,6 +227,38 @@
         perimetroPoligono += distanzaVerticiPoligono;
     }
     console.log(perimetroPoligono);
+    var markerMouse = new Array();
+    var nclick = 0;
+    var posizioniMouse = new Array();
+    var posizioniEsplicitate = "";
+    function creaPoligono(input) {
+    /* POLYGON NON ACCETTA STRINGHE!!!!!!!!!!!!!!!!!!!!!!!! */
+        var poligono = new L.polygon([input], { stroke: false, fillRule: "nonzero", fillOpacity: 0.3 });
+        return poligono;
+    }
+    var poligonoMouse;
+    var last_pl;
+    map.on('click', function (e) {
+        if (last_pl != null) {
+                last_pl.removeFrom(map); 
+        }
+        markerMouse[nclick] = L.marker(e.latlng).addTo(map);
+        //console.log(markerMouse);
+        posizioniMouse[nclick] = markerMouse[nclick]._latlng;
+        //console.log(posizioniMouse);
+        //console.log(posizioniEsplicitate);
+        //console.log(stringaPosizioniMouse); 
+        poligonoMouse = creaPoligono(posizioniMouse);
+        console.log(poligonoMouse);
+        poligonoMouse.addTo(map); 
+        last_pl = poligonoMouse;
+        console.log("aggiunto poligono alla mappa" + poligonoMouse);
+        //window.map.removeLayer(window.poligonoMouse);
+        //console.log(poligonoMouse);
+        document.getElementById("posizioniMouse").innerHTML = posizioniMouse;
+        console.log("rimuovo poligono dalla mappa" + poligonoMouse);
+        nclick++;
+    });
     //var distance = getDistance([lat1, lng1], [lat2, lng2])
     /*riferimento per aree e cluster http://leaflet.github.io/Leaflet.markercluster/example/marker-clustering-realworld.388.html */
     /* link icone marker https://www.iconfinder.com/icons/299087/map_marker_icon */
@@ -262,6 +294,31 @@
         ////var centro = L.circle(new L.LatLng(centriCerchi[0], centriCerchi[1]), { radius: 200, stroke: false }).addTo(map);
         /* distanza punti poligono */
         /* determinazione posizione marker rispetto al poligono */
+        if (posizioniMouse.length > 3) {
+            var dentroPoligonoMouse = isMarkerInsidePolygon(marker, poligonoMouse);
+            for (var contatore1 = 0; contatore1 < posizioniMouse.length; contatore1++) {
+                var contatore2 = contatore1 + 1;
+                if (contatore2 >= posizioniMouse.length) {
+                    contatore2 = 0;
+                }
+                var punto1 = posizioniMouse[contatore1];
+                var punto2 = posizioniMouse[contatore2];
+                var distanzaVerticiPoligono = getDistance(punto1, punto2);
+                var verticePoligono = posizioniMouse[contatore1];
+                var distanzaMarkerVertice1 = getDistance(punto1, puntiMatrice);
+                var distanzaMarkerVertice2 = getDistance(punto2, puntiMatrice);
+                var limite = 40;
+                var sommaDistanze = distanzaMarkerVertice1 + distanzaMarkerVertice2;
+                //console.log(distanzaMarkerVerticePoligono);
+                if (sommaDistanze <= (distanzaVerticiPoligono + limite)) {
+                    var alertMarkerBordo = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 50, stroke: false, color: 'yellow' }).addTo(map);
+                }
+            }
+            console.log(dentroPoligonoMouse);
+            if (dentroPoligonoMouse) {
+                var alertMarkerInterno = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 150, stroke: false, color: 'red' }).addTo(map);
+            }
+        }
         var dentro = isMarkerInsidePolygon(marker, poligonoDefinito);
         for (var contatore1 = 0; contatore1 < puntiAssegnati.length; contatore1++) {
             var contatore2 = contatore1 + 1;
@@ -321,32 +378,5 @@
     //console.log(verticiPoligono);
     //var poligonoConvesso = L.polygon([verticiPoligono]).addTo(map);
 
-    var markerMouse = new Array();
-    var nclick = 0;
-    var posizioniMouse = new Array();
-    var posizioniEsplicitate = "";
-    function creaPoligono(input) {
-        /* POLYGON NON ACCETTA STRINGHE!!!!!!!!!!!!!!!!!!!!!!!! */
-        var poligono = new L.polygon([input], { stroke: false });
-        return poligono;
-    }
-    map.on('click', function(e){
-        markerMouse[nclick] = L.marker(e.latlng).addTo(map);
-        //console.log(markerMouse);
-        posizioniMouse[nclick] = markerMouse[nclick]._latlng;
-        //console.log(posizioniMouse);
-        //console.log(posizioniEsplicitate);
-        //console.log(stringaPosizioniMouse);
-        var poligonoMouse = creaPoligono(posizioniMouse).addTo(map);
-        //var poligonoMouse = new L.polygon([stringaPosizioniMouse]);
-        console.log(poligonoMouse);
-        document.getElementById("posizioniMouse").innerHTML = posizioniMouse;
-        nclick++;
-    });
-    //console.log(markerMouse);
-    //console.log(posizioniMouse);
-    //console.log(posizioniEsplicitate);
-    
-  
 </script>
 
