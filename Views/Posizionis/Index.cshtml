@@ -99,6 +99,8 @@
     //Console.WriteLine(z);
     //string coordinata = "[45.4502977, 9.1675544]";
 }
+
+<p id="posizioniMouse"></p>
 <div id="mapid"></div>
 <style>
     #mapid {
@@ -207,10 +209,11 @@
     var puntiAssegnati = [[45.4523599440727, 9.154427433314709],
     [45.45600255600573, 9.166078949272247],
     [45.46124027981537, 9.164405250864576],
-    [45.4602168547772, 9.149835491461005]];
+    [45.4602168547772, 9.149835491461005], ];
     var poligonoDefinito = L.polygon([
         puntiAssegnati
     ]).addTo(map);
+    console.log(poligonoDefinito);
     var perimetroPoligono = 0;
     for (var i = 0; i < puntiAssegnati.length; i++) {
         var j = i + 1;
@@ -320,18 +323,30 @@
 
     var markerMouse = new Array();
     var nclick = 0;
-    function salvaPosizioniMouse(ingresso) {
-        var posizioniMouse = new ingresso.LatLng();
-        return posizioniMouse;
+    var posizioniMouse = new Array();
+    var posizioniEsplicitate = "";
+    function creaPoligono(input) {
+        /* POLYGON NON ACCETTA STRINGHE!!!!!!!!!!!!!!!!!!!!!!!! */
+        var poligono = new L.polygon([input], { stroke: false });
+        return poligono;
     }
     map.on('click', function(e){
         markerMouse[nclick] = L.marker(e.latlng).addTo(map);
         //console.log(markerMouse);
+        posizioniMouse[nclick] = markerMouse[nclick]._latlng;
+        //console.log(posizioniMouse);
+        //console.log(posizioniEsplicitate);
+        //console.log(stringaPosizioniMouse);
+        var poligonoMouse = creaPoligono(posizioniMouse).addTo(map);
+        //var poligonoMouse = new L.polygon([stringaPosizioniMouse]);
+        console.log(poligonoMouse);
+        document.getElementById("posizioniMouse").innerHTML = posizioniMouse;
         nclick++;
-        //var posizioniMouse = salvaPosizioniMouse(markerMouse);
     });
-    console.log(markerMouse);
-    
+    //console.log(markerMouse);
     //console.log(posizioniMouse);
-    //var poligonoMouse = L.polygon(posizioniMouse).addTo(map);
+    //console.log(posizioniEsplicitate);
+    
+  
 </script>
+
