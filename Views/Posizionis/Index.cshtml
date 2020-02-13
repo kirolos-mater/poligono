@@ -205,6 +205,19 @@
     //    puntijs
     //], {stroke: true}).addTo(mymap);
     //console.log(poligonoPercorso);
+    /* definizione icone Marker */
+    var greenIcon = L.icon({
+        iconUrl: 'marker-green.png'
+    });
+    var blueIcon = L.icon({
+        iconUrl: 'marker-blue.png'
+    });
+    var redIcon = L.icon({
+        iconUrl: 'marker-red.png'
+    });
+    var yellowIcon = L.icon({
+        iconUrl: 'marker-yellow.png'
+    });
     /* poligono che usa come vertici coordinate assegnate */
     var puntiAssegnati = [[45.4523599440727, 9.154427433314709],
     [45.45600255600573, 9.166078949272247],
@@ -226,6 +239,7 @@
         console.log(distanzaVerticiPoligono);
         perimetroPoligono += distanzaVerticiPoligono;
     }
+    console.log(puntiAssegnati);
     console.log(perimetroPoligono);
     var markerMouse = new Array();
     var nclick = 0;
@@ -238,6 +252,7 @@
     }
     var poligonoMouse;
     var last_pl;
+    var latLngMouse = new Array();
     map.on('click', function (e) {
         if (last_pl != null) {
                 last_pl.removeFrom(map); 
@@ -246,18 +261,57 @@
         //console.log(markerMouse);
         posizioniMouse[nclick] = markerMouse[nclick]._latlng;
         //console.log(posizioniMouse);
+        //console.log(posizioniMouse[nclick]);
+        //console.log(posizioniMouse[nclick]["lat"]);
+        var latMouse = posizioniMouse[nclick]["lat"];
+        var lngMouse = posizioniMouse[nclick]["lng"];
+        //console.log(latMouse);
+        latLngMouse[nclick] = [latMouse, lngMouse];
+        console.log(latLngMouse);
         //console.log(posizioniEsplicitate);
         //console.log(stringaPosizioniMouse); 
         poligonoMouse = creaPoligono(posizioniMouse);
         console.log(poligonoMouse);
         poligonoMouse.addTo(map); 
         last_pl = poligonoMouse;
-        console.log("aggiunto poligono alla mappa" + poligonoMouse);
+        //console.log("aggiunto poligono alla mappa" + poligonoMouse);
         //window.map.removeLayer(window.poligonoMouse);
         //console.log(poligonoMouse);
-        document.getElementById("posizioniMouse").innerHTML = posizioniMouse;
-        console.log("rimuovo poligono dalla mappa" + poligonoMouse);
+        document.getElementById("posizioniMouse").innerHTML = latLngMouse;
+        var puntiMouseSalvati = latLngMouse;
+        console.log(puntiMouseSalvati);
+        //console.log("rimuovo poligono dalla mappa" + poligonoMouse);
         nclick++;
+        if (posizioniMouse.length > 2) {
+            for (var i = 0; i < puntijs.length; i++) {
+                var puntiMatrice = puntijs[i];     
+                var marker = L.marker(new L.LatLng(puntiMatrice[0], puntiMatrice[1]));
+                for (var contatore1 = 0; contatore1 < latLngMouse.length; contatore1++) {
+                    var contatore2 = contatore1 + 1;
+                    if (contatore2 >= latLngMouse.length) {
+                        contatore2 = 0;
+                    }
+                    var punto1 = latLngMouse[contatore1];
+                    var punto2 = latLngMouse[contatore2];
+                    var distanzaVerticiPoligono = getDistance(punto1, punto2);
+                    var distanzaMarkerVertice1 = getDistance(punto1, puntiMatrice);
+                    var distanzaMarkerVertice2 = getDistance(punto2, puntiMatrice);
+                    var limite = 40;
+                    var sommaDistanze = distanzaMarkerVertice1 + distanzaMarkerVertice2;
+                    //console.log(distanzaMarkerVerticePoligono);
+                    if (sommaDistanze <= (distanzaVerticiPoligono + limite)) {
+                        var alertMarkerBordo = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 50, stroke: false, color: 'yellow' });
+                        alertMarkerBordo.addTo(map);
+                    }
+                }
+                var dentroPoligonoMouse = isMarkerInsidePolygon(marker, poligonoMouse);
+                //console.log(dentroPoligonoMouse);
+                if (dentroPoligonoMouse) {
+                    var alertMarkerInterno = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 150, stroke: false, color: 'red' });
+                    alertMarkerInterno.addTo(map);
+                }
+            }
+        }
     });
     //var distance = getDistance([lat1, lng1], [lat2, lng2])
     /*riferimento per aree e cluster http://leaflet.github.io/Leaflet.markercluster/example/marker-clustering-realworld.388.html */
@@ -271,7 +325,7 @@
     for (var i = 0; i < puntijs.length; i++) {
         /*cluster di marker*/
         var puntiMatrice = puntijs[i];
-        var marker = L.marker(new L.LatLng(puntiMatrice[0], puntiMatrice[1]));
+        var marker = L.marker(new L.LatLng(puntiMatrice[0], puntiMatrice[1], { icon: redIcon }));
         //console.log(marker);
         markers.addLayer(marker);
         //if (tipo != puntiMatrice[2]) {
@@ -294,31 +348,6 @@
         ////var centro = L.circle(new L.LatLng(centriCerchi[0], centriCerchi[1]), { radius: 200, stroke: false }).addTo(map);
         /* distanza punti poligono */
         /* determinazione posizione marker rispetto al poligono */
-        if (posizioniMouse.length > 3) {
-            var dentroPoligonoMouse = isMarkerInsidePolygon(marker, poligonoMouse);
-            for (var contatore1 = 0; contatore1 < posizioniMouse.length; contatore1++) {
-                var contatore2 = contatore1 + 1;
-                if (contatore2 >= posizioniMouse.length) {
-                    contatore2 = 0;
-                }
-                var punto1 = posizioniMouse[contatore1];
-                var punto2 = posizioniMouse[contatore2];
-                var distanzaVerticiPoligono = getDistance(punto1, punto2);
-                var verticePoligono = posizioniMouse[contatore1];
-                var distanzaMarkerVertice1 = getDistance(punto1, puntiMatrice);
-                var distanzaMarkerVertice2 = getDistance(punto2, puntiMatrice);
-                var limite = 40;
-                var sommaDistanze = distanzaMarkerVertice1 + distanzaMarkerVertice2;
-                //console.log(distanzaMarkerVerticePoligono);
-                if (sommaDistanze <= (distanzaVerticiPoligono + limite)) {
-                    var alertMarkerBordo = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 50, stroke: false, color: 'yellow' }).addTo(map);
-                }
-            }
-            console.log(dentroPoligonoMouse);
-            if (dentroPoligonoMouse) {
-                var alertMarkerInterno = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 150, stroke: false, color: 'red' }).addTo(map);
-            }
-        }
         var dentro = isMarkerInsidePolygon(marker, poligonoDefinito);
         for (var contatore1 = 0; contatore1 < puntiAssegnati.length; contatore1++) {
             var contatore2 = contatore1 + 1;
@@ -338,7 +367,7 @@
                 var alertMarkerBordo = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 50, stroke: false, color: 'yellow' }).addTo(map);
             }
         }
-        console.log(dentro);
+        //console.log(dentro);
         if (dentro) {
             var alertMarkerInterno = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 150, stroke: false, color: 'red' }).addTo(map);
         }
