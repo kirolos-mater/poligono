@@ -25,7 +25,6 @@
       </e>
       <e p="Controllers" t="Include">
         <e p="HomeController.cs" t="Include" />
-        <e p="PosizioniController.cs" t="Include" />
         <e p="PosizionisController.cs" t="Include" />
       </e>
       <e p="favicon.ico" t="Include" />
@@ -49,6 +48,7 @@
         <e p="Posizionis.edmx.diagram" t="Include" />
         <e p="Posizionis.tt" t="Include" />
         <e p="Posizionis1.cs" t="Include" />
+        <e p="StringheMouse.cs" t="Include" />
       </e>
       <e p="obj" t="ExcludeRecursive" />
       <e p="packages" t="ExcludeRecursive" />

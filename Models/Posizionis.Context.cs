@@ -13,10 +13,10 @@ namespace poligono.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class PosizioniEntities1 : DbContext
+    public partial class PosizioniEntities2 : DbContext
     {
-        public PosizioniEntities1()
-            : base("name=PosizioniEntities1")
+        public PosizioniEntities2()
+            : base("name=PosizioniEntities2")
         {
         }
     
@@ -27,5 +27,6 @@ namespace poligono.Models
     
         public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
         public virtual DbSet<Posizionis> Posizionis { get; set; }
+        public virtual DbSet<StringheMouse> StringheMouse { get; set; }
     }
 }

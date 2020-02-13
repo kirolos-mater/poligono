@@ -18,10 +18,17 @@
     <Property Name="Lat" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="Lon" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="Tipo" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="StringheMouse">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
     <Property Name="StringaMouse" Type="text" />
   </EntityType>
   <EntityContainer Name="PosizionisStoreContainer">
     <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Posizionis" EntityType="Self.Posizionis" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="StringheMouse" EntityType="Self.StringheMouse" Schema="dbo" store:Type="Tables" />
   </EntityContainer>
 </Schema>

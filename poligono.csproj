@@ -143,7 +143,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PosizioniController.cs" />
     <Compile Include="Controllers\PosizionisController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -168,6 +167,9 @@
     <Compile Include="Models\Posizionis1.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+      <DependentUpon>Posizionis.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StringheMouse.cs">
       <DependentUpon>Posizionis.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

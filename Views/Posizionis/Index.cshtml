@@ -96,11 +96,15 @@
         i++;
     }
     Console.WriteLine(puntiStr);
+    string stringaMouse = "0";
     //Console.WriteLine(z);
     //string coordinata = "[45.4502977, 9.1675544]";
 }
 
-<p id="posizioniMouse"></p>
+@*<p id="posizioniMouse"></p>*@
+<form action="/" method="post">
+    <input id="stringamousehtml" name="stringamousehtml" type="text" runat="server" />
+</form>
 <div id="mapid"></div>
 <style>
     #mapid {
@@ -277,10 +281,20 @@
         //console.log("aggiunto poligono alla mappa" + poligonoMouse);
         //window.map.removeLayer(window.poligonoMouse);
         //console.log(poligonoMouse);
-        document.getElementById("posizioniMouse").innerHTML = latLngMouse;
+        //document.getElementById("posizioniMouse").innerHTML = latLngMouse;
         var puntiMouseSalvati = latLngMouse;
         console.log(puntiMouseSalvati);
         //console.log("rimuovo poligono dalla mappa" + poligonoMouse);
+        document.getElementById("stringamousehtml").value = puntiMouseSalvati;         
+        @{ 
+            
+            System.Diagnostics.Debug.WriteLine("Valore iniziale stringa");
+            System.Diagnostics.Debug.WriteLine(stringaMouse);
+            stringaMouse = Request.Form["stringamousehtml"];
+            System.Diagnostics.Debug.WriteLine("Valore modificato stringa");
+            System.Diagnostics.Debug.WriteLine(stringaMouse);
+
+        }
         nclick++;
         if (posizioniMouse.length > 2) {
             for (var i = 0; i < puntijs.length; i++) {

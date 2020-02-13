@@ -18,6 +18,5 @@ namespace poligono.Models
         public string Lat { get; set; }
         public string Lon { get; set; }
         public string Tipo { get; set; }
-        public string StringaMouse { get; set; }
     }
 }

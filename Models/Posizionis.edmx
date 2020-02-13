@@ -23,11 +23,18 @@
           <Property Name="Lat" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Lon" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Tipo" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="StringheMouse">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="StringaMouse" Type="text" />
         </EntityType>
         <EntityContainer Name="PosizionisStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Posizionis" EntityType="Self.Posizionis" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StringheMouse" EntityType="Self.StringheMouse" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
@@ -52,18 +59,25 @@
           <Property Name="Lat" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Lon" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Tipo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="StringheMouse">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="StringaMouse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityContainer Name="PosizioniEntities1" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="PosizioniEntities2" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
           <EntitySet Name="Posizionis" EntityType="Self.Posizionis" />
+          <EntitySet Name="StringheMouse" EntityType="Self.StringheMouse" />
         </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="PosizionisStoreContainer" CdmEntityContainer="PosizioniEntities1">
+        <EntityContainerMapping StorageEntityContainer="PosizionisStoreContainer" CdmEntityContainer="PosizioniEntities2">
           <EntitySetMapping Name="C__MigrationHistory">
             <EntityTypeMapping TypeName="Posizionis.C__MigrationHistory">
               <MappingFragment StoreEntitySet="__MigrationHistory">
@@ -81,6 +95,13 @@
                 <ScalarProperty Name="Lat" ColumnName="Lat" />
                 <ScalarProperty Name="Lon" ColumnName="Lon" />
                 <ScalarProperty Name="Tipo" ColumnName="Tipo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StringheMouse">
+            <EntityTypeMapping TypeName="Posizionis.StringheMouse">
+              <MappingFragment StoreEntitySet="StringheMouse">
+                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="StringaMouse" ColumnName="StringaMouse" />
               </MappingFragment>
             </EntityTypeMapping>
