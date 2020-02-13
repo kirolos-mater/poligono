@@ -169,6 +169,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Posizionis.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\StringaMouse.cs" />
     <Compile Include="Models\StringheMouse.cs">
       <DependentUpon>Posizionis.tt</DependentUpon>
     </Compile>

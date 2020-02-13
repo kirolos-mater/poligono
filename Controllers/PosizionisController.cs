@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using poligono.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace poligono.Controllers
 {
@@ -14,10 +15,28 @@ namespace poligono.Controllers
     {
         private Posizioni db = new Posizioni();
 
+        StringaMouse context = new StringaMouse();  
+
         // GET: Posizionis
         public ActionResult Index()
         {
             return View(db.Posizionis.ToList());
+        }
+
+        [HttpPost]
+        public ActionResult CreateArea(StringaMouse str)
+        {
+            context.StringheMouse.Add(str);
+            context.SaveChanges();
+            string message = "SUCCESS";
+            return Json(new { Message = message, JsonRequestBehavior.AllowGet });
+        }
+
+        public JsonResult GetArea(string id)
+        {
+            List<StringaMouse> StringheMouse = new List<StringaMouse>();
+            StringheMouse = context.StringheMouse.ToList();
+            return Json(StringheMouse, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Posizionis/Details/5
