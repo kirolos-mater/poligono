@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\kirolos.mater\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\kirolos.mater\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_poligono.-668602312.00" t="ExcludeRecursive" />
+    <e p="C:\xampp\htdocs\poligono" t="IncludeRecursive">
+      <e p="App_Data" t="Include" />
+      <e p="App_Start" t="Include">
+        <e p="BundleConfig.cs" t="Include" />
+        <e p="FilterConfig.cs" t="Include" />
+        <e p="RouteConfig.cs" t="Include" />
+        <e p="WebApiConfig.cs" t="Include" />
+      </e>
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Content" t="Include">
+        <e p="bootstrap-theme.css" t="Include" />
+        <e p="bootstrap-theme.css.map" t="Include" />
+        <e p="bootstrap-theme.min.css" t="Include" />
+        <e p="bootstrap-theme.min.css.map" t="Include" />
+        <e p="bootstrap.css" t="Include" />
+        <e p="bootstrap.css.map" t="Include" />
+        <e p="bootstrap.min.css" t="Include" />
+        <e p="bootstrap.min.css.map" t="Include" />
+        <e p="Site.css" t="Include" />
+      </e>
+      <e p="Controllers" t="Include">
+        <e p="HomeController.cs" t="Include" />
+        <e p="PosizioniController.cs" t="Include" />
+        <e p="PosizionisController.cs" t="Include" />
+      </e>
+      <e p="favicon.ico" t="Include" />
+      <e p="fonts" t="Include">
+        <e p="glyphicons-halflings-regular.eot" t="Include" />
+        <e p="glyphicons-halflings-regular.svg" t="Include" />
+        <e p="glyphicons-halflings-regular.ttf" t="Include" />
+        <e p="glyphicons-halflings-regular.woff" t="Include" />
+        <e p="glyphicons-halflings-regular.woff2" t="Include" />
+      </e>
+      <e p="Global.asax" t="Include" />
+      <e p="Global.asax.cs" t="Include" />
+      <e p="Models" t="Include">
+        <e p="C__MigrationHistory.cs" t="Include" />
+        <e p="Posizioni.cs" t="Include" />
+        <e p="Posizionis.Context.cs" t="Include" />
+        <e p="Posizionis.Context.tt" t="Include" />
+        <e p="Posizionis.cs" t="Include" />
+        <e p="Posizionis.Designer.cs" t="Include" />
+        <e p="Posizionis.edmx" t="Include" />
+        <e p="Posizionis.edmx.diagram" t="Include" />
+        <e p="Posizionis.tt" t="Include" />
+        <e p="Posizionis1.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="packages.config" t="Include" />
+      <e p="poligono.csproj" t="IncludeRecursive" />
+      <e p="poligono.sln" t="IncludeFlat" />
+      <e p="Properties" t="Include">
+        <e p="AssemblyInfo.cs" t="Include" />
+      </e>
+      <e p="Scripts" t="Include">
+        <e p="bootstrap.js" t="Include" />
+        <e p="bootstrap.min.js" t="Include" />
+        <e p="jquery-3.4.1.intellisense.js" t="Include" />
+        <e p="jquery-3.4.1.js" t="Include" />
+        <e p="jquery-3.4.1.min.js" t="Include" />
+        <e p="jquery-3.4.1.min.map" t="Include" />
+        <e p="jquery-3.4.1.slim.js" t="Include" />
+        <e p="jquery-3.4.1.slim.min.js" t="Include" />
+        <e p="jquery-3.4.1.slim.min.map" t="Include" />
+        <e p="jquery.validate-vsdoc.js" t="Include" />
+        <e p="jquery.validate.js" t="Include" />
+        <e p="jquery.validate.min.js" t="Include" />
+        <e p="jquery.validate.unobtrusive.js" t="Include" />
+        <e p="jquery.validate.unobtrusive.min.js" t="Include" />
+        <e p="modernizr-2.8.3.js" t="Include" />
+        <e p="node_modules" t="Include">
+          <e p="leaflet" t="Include">
+            <e p="CHANGELOG.md" t="Include" />
+            <e p="dist" t="Include">
+              <e p="images" t="Include">
+                <e p="layers-2x.png" t="Include" />
+                <e p="layers.png" t="Include" />
+                <e p="marker-icon-2x.png" t="Include" />
+                <e p="marker-icon.png" t="Include" />
+                <e p="marker-shadow.png" t="Include" />
+              </e>
+              <e p="leaflet-src.esm.js" t="Include" />
+              <e p="leaflet-src.esm.js.map" t="Include" />
+              <e p="leaflet-src.js" t="Include" />
+              <e p="leaflet-src.js.map" t="Include" />
+              <e p="leaflet.css" t="Include" />
+              <e p="leaflet.js" t="Include" />
+              <e p="leaflet.js.map" t="Include" />
+            </e>
+            <e p="LICENSE" t="Include" />
+            <e p="package.json" t="Include" />
+            <e p="README.md" t="Include" />
+            <e p="src" t="Include">
+              <e p="control" t="Include">
+                <e p="Control.Attribution.js" t="Include" />
+                <e p="Control.js" t="Include" />
+                <e p="Control.Layers.js" t="Include" />
+                <e p="Control.Scale.js" t="Include" />
+                <e p="Control.Zoom.js" t="Include" />
+                <e p="index.js" t="Include" />
+              </e>
+              <e p="core" t="Include">
+                <e p="Browser.js" t="Include" />
+                <e p="Class.js" t="Include" />
+                <e p="Class.leafdoc" t="Include" />
+                <e p="Events.js" t="Include" />
+                <e p="Events.leafdoc" t="Include" />
+                <e p="Handler.js" t="Include" />
+                <e p="index.js" t="Include" />
+                <e p="Util.js" t="Include" />
+              </e>
+              <e p="dom" t="Include">
+                <e p="DomEvent.DoubleTap.js" t="Include" />
+                <e p="DomEvent.js" t="Include" />
+                <e p="DomEvent.Pointer.js" t="Include" />
+                <e p="DomUtil.js" t="Include" />
+                <e p="Draggable.js" t="Include" />
+                <e p="index.js" t="Include" />
+                <e p="PosAnimation.js" t="Include" />
+              </e>
+              <e p="geo" t="Include">
+                <e p="crs" t="Include">
+                  <e p="CRS.Earth.js" t="Include" />
+                  <e p="CRS.EPSG3395.js" t="Include" />
+                  <e p="CRS.EPSG3857.js" t="Include" />
+                  <e p="CRS.EPSG4326.js" t="Include" />
+                  <e p="CRS.js" t="Include" />
+                  <e p="CRS.Simple.js" t="Include" />
+                  <e p="index.js" t="Include" />
+                </e>
+                <e p="index.js" t="Include" />
+                <e p="LatLng.js" t="Include" />
+                <e p="LatLngBounds.js" t="Include" />
+                <e p="projection" t="Include">
+                  <e p="index.js" t="Include" />
+                  <e p="Projection.LonLat.js" t="Include" />
+                  <e p="Projection.Mercator.js" t="Include" />
+                  <e p="Projection.SphericalMercator.js" t="Include" />
+                </e>
+              </e>
+              <e p="geometry" t="Include">
+                <e p="Bounds.js" t="Include" />
+                <e p="index.js" t="Include" />
+                <e p="LineUtil.js" t="Include" />
+                <e p="Point.js" t="Include" />
+                <e p="PolyUtil.js" t="Include" />
+                <e p="Transformation.js" t="Include" />
+              </e>
+              <e p="images" t="Include">
+                <e p="layers.svg" t="Include" />
+                <e p="logo.svg" t="Include" />
+                <e p="marker.svg" t="Include" />
+              </e>
+              <e p="layer" t="Include">
+                <e p="DivOverlay.js" t="Include" />
+                <e p="FeatureGroup.js" t="Include" />
+                <e p="GeoJSON.js" t="Include" />
+                <e p="ImageOverlay.js" t="Include" />
+                <e p="index.js" t="Include" />
+                <e p="Layer.Interactive.leafdoc" t="Include" />
+                <e p="Layer.js" t="Include" />
+                <e p="LayerGroup.js" t="Include" />
+                <e p="marker" t="Include">
+                  <e p="DivIcon.js" t="Include" />
+                  <e p="Icon.Default.js" t="Include" />
+                  <e p="Icon.js" t="Include" />
+                  <e p="index.js" t="Include" />
+                  <e p="Marker.Drag.js" t="Include" />
+                  <e p="Marker.js" t="Include" />
+                </e>
+                <e p="Popup.js" t="Include" />
+                <e p="SVGOverlay.js" t="Include" />
+                <e p="tile" t="Include">
+                  <e p="GridLayer.js" t="Include" />
+                  <e p="index.js" t="Include" />
+                  <e p="TileLayer.js" t="Include" />
+                  <e p="TileLayer.WMS.js" t="Include" />
+                </e>
+                <e p="Tooltip.js" t="Include" />
+                <e p="vector" t="Include">
+                  <e p="Canvas.js" t="Include" />
+                  <e p="Circle.js" t="Include" />
+                  <e p="CircleMarker.js" t="Include" />
+                  <e p="index.js" t="Include" />
+                  <e p="Path.js" t="Include" />
+                  <e p="Polygon.js" t="Include" />
+                  <e p="Polyline.js" t="Include" />
+                  <e p="Rectangle.js" t="Include" />
+                  <e p="Renderer.getRenderer.js" t="Include" />
+                  <e p="Renderer.js" t="Include" />
+                  <e p="SVG.js" t="Include" />
+                  <e p="SVG.Util.js" t="Include" />
+                  <e p="SVG.VML.js" t="Include" />
+                </e>
+                <e p="VideoOverlay.js" t="Include" />
+              </e>
+              <e p="leaflet.js" t="Include" />
+              <e p="map" t="Include">
+                <e p="handler" t="Include">
+                  <e p="Map.BoxZoom.js" t="Include" />
+                  <e p="Map.DoubleClickZoom.js" t="Include" />
+                  <e p="Map.Drag.js" t="Include" />
+                  <e p="Map.Keyboard.js" t="Include" />
+                  <e p="Map.ScrollWheelZoom.js" t="Include" />
+                  <e p="Map.Tap.js" t="Include" />
+                  <e p="Map.TouchZoom.js" t="Include" />
+                </e>
+                <e p="index.js" t="Include" />
+                <e p="Map.js" t="Include" />
+                <e p="Map.methodOptions.leafdoc" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="Views" t="Include">
+        <e p="_ViewStart.cshtml" t="Include" />
+        <e p="Home" t="Include">
+          <e p="About.cshtml" t="Include" />
+          <e p="Contact.cshtml" t="Include" />
+          <e p="Index.cshtml" t="Include" />
+        </e>
+        <e p="Posizionis" t="Include">
+          <e p="Create.cshtml" t="Include" />
+          <e p="Delete.cshtml" t="Include" />
+          <e p="Details.cshtml" t="Include" />
+          <e p="Edit.cshtml" t="Include" />
+          <e p="Index.cshtml" t="Include" />
+        </e>
+        <e p="Shared" t="Include">
+          <e p="_Layout.cshtml" t="Include" />
+          <e p="Error.cshtml" t="Include" />
+        </e>
+        <e p="Web.config" t="Include" />
+      </e>
+      <e p="Web.config" t="Include" />
+      <e p="Web.Debug.config" t="Include" />
+      <e p="Web.Release.config" t="Include" />
+    </e>
+  </component>
+</project>

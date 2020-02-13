@@ -23,6 +23,7 @@
           <Property Name="Lat" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Lon" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Tipo" Type="nvarchar" MaxLength="50" />
+          <Property Name="StringaMouse" Type="text" />
         </EntityType>
         <EntityContainer Name="PosizionisStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
@@ -51,8 +52,9 @@
           <Property Name="Lat" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Lon" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Tipo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StringaMouse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityContainer Name="PosizioniEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="PosizioniEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
           <EntitySet Name="Posizionis" EntityType="Self.Posizionis" />
         </EntityContainer>
@@ -61,7 +63,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="PosizionisStoreContainer" CdmEntityContainer="PosizioniEntities">
+        <EntityContainerMapping StorageEntityContainer="PosizionisStoreContainer" CdmEntityContainer="PosizioniEntities1">
           <EntitySetMapping Name="C__MigrationHistory">
             <EntityTypeMapping TypeName="Posizionis.C__MigrationHistory">
               <MappingFragment StoreEntitySet="__MigrationHistory">
@@ -79,6 +81,7 @@
                 <ScalarProperty Name="Lat" ColumnName="Lat" />
                 <ScalarProperty Name="Lon" ColumnName="Lon" />
                 <ScalarProperty Name="Tipo" ColumnName="Tipo" />
+                <ScalarProperty Name="StringaMouse" ColumnName="StringaMouse" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
