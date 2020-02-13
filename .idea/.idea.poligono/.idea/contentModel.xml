@@ -39,7 +39,6 @@
       <e p="Global.asax.cs" t="Include" />
       <e p="Models" t="Include">
         <e p="C__MigrationHistory.cs" t="Include" />
-        <e p="Posizioni.cs" t="Include" />
         <e p="Posizionis.Context.cs" t="Include" />
         <e p="Posizionis.Context.tt" t="Include" />
         <e p="Posizionis.cs" t="Include" />
