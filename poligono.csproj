@@ -150,7 +150,6 @@
     <Compile Include="Models\C__MigrationHistory.cs">
       <DependentUpon>Posizionis.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Posizioni.cs" />
     <Compile Include="Models\Posizionis.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -169,7 +168,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Posizionis.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\StringaMouse.cs" />
     <Compile Include="Models\StringheMouse.cs">
       <DependentUpon>Posizionis.tt</DependentUpon>
     </Compile>

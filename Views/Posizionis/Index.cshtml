@@ -96,7 +96,7 @@
         i++;
     }
     Console.WriteLine(puntiStr);
-    string stringaMouse = "0";
+    //string stringaMouse = "0";
     //Console.WriteLine(z);
     //string coordinata = "[45.4502977, 9.1675544]";
 }
@@ -282,12 +282,33 @@
         //window.map.removeLayer(window.poligonoMouse);
         //console.log(poligonoMouse);
         //document.getElementById("posizioniMouse").innerHTML = latLngMouse;
-        var puntiMouseSalvati = latLngMouse;
+        var puntiMouseSalvati = latLngMouse;        
         console.log(puntiMouseSalvati);
+        var stringaPerAjax = "";
+        for (var i = 0; i < puntiMouseSalvati.length; i++) {
+            var latAjax = puntiMouseSalvati[i][0];
+            var lngAjax = puntiMouseSalvati[i][1];
+            stringaPerAjax = stringaPerAjax + "[" + latAjax + ", " + lngAjax + "], ";
+            //console.log(stringaPerAjax);
+        }
         //console.log("rimuovo poligono dalla mappa" + poligonoMouse);
         document.getElementById("stringamousehtml").value = puntiMouseSalvati;
-        
-        @{ 
+        /* fonte per creare AJAX https://www.c-sharpcorner.com/blogs/using-ajax-in-asp-net-mvc */
+        @*$.ajax({  
+            type: "POST",  
+            url: '@Url.Action("createArea")',
+            data: JSON.stringify(stringaPerAjax),  
+            dataType: "json",  
+            contentType: "application/json; charset=utf-8",  
+            success: function () {  
+                 //alert("Data has been added successfully.");  
+                LoadData();  
+            },  
+            error: function () {  
+                alert("Error while inserting data");  
+            }  
+        });*@  
+        @*@{ 
             
             System.Diagnostics.Debug.WriteLine("Valore iniziale stringa");
             System.Diagnostics.Debug.WriteLine(stringaMouse);
@@ -295,7 +316,7 @@
             System.Diagnostics.Debug.WriteLine("Valore modificato stringa");
             System.Diagnostics.Debug.WriteLine(stringaMouse);
 
-        }
+        }*@
         nclick++;
         if (posizioniMouse.length > 2) {
             for (var i = 0; i < puntijs.length; i++) {
