@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="b3cd415795354b60b903356c977199ce" Name="Diagram1">
+      <Diagram DiagramId="df649b8fc6664d558a7c7ac6a62fe168" Name="Diagram1">
         <EntityTypeShape EntityType="Posizionis.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Posizionis.Posizionis" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="Posizionis.StringheMouse" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />

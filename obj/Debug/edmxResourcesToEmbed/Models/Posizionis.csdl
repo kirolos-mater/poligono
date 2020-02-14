@@ -23,10 +23,11 @@
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="StringaMouse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="DataOra" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
   </EntityType>
-  <EntityContainer Name="PosizioniEntities2" annotation:LazyLoadingEnabled="true">
+  <EntityContainer Name="PosizioniEntities3" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
     <EntitySet Name="Posizionis" EntityType="Self.Posizionis" />
     <EntitySet Name="StringheMouse" EntityType="Self.StringheMouse" />

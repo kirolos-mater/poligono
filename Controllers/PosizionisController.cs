@@ -13,9 +13,9 @@ namespace poligono.Controllers
 {
     public class PosizionisController : Controller
     {
-        private PosizioniEntities2 db = new PosizioniEntities2();
+        private PosizioniEntities3 db = new PosizioniEntities3();
 
-        PosizioniEntities2 context = new PosizioniEntities2();  
+        PosizioniEntities3 context = new PosizioniEntities3();  
 
         // GET: Posizionis
         public ActionResult Index()
@@ -24,10 +24,12 @@ namespace poligono.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateArea(StringheMouse str)
+        public ActionResult CreateArea(StringheMouse stringheMouse)
         {
-            context.StringheMouse.Add(str);
-            context.SaveChanges();
+            System.Diagnostics.Debug.WriteLine("Valore iniziale stringa");
+            System.Diagnostics.Debug.WriteLine(stringheMouse);
+            db.StringheMouse.Add(stringheMouse);
+            db.SaveChanges();
             string message = "SUCCESS";
             return Json(new { Message = message, JsonRequestBehavior.AllowGet });
         }
@@ -35,7 +37,7 @@ namespace poligono.Controllers
         public JsonResult GetArea(string id)
         {
             List<StringheMouse> StringheMouse = new List<StringheMouse>();
-            StringheMouse = context.StringheMouse.ToList();
+            StringheMouse = db.StringheMouse.ToList();
             return Json(StringheMouse, JsonRequestBehavior.AllowGet);
         }
 

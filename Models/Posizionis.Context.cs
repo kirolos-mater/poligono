@@ -13,10 +13,10 @@ namespace poligono.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class PosizioniEntities2 : DbContext
+    public partial class PosizioniEntities3 : DbContext
     {
-        public PosizioniEntities2()
-            : base("name=PosizioniEntities2")
+        public PosizioniEntities3()
+            : base("name=PosizioniEntities3")
         {
         }
     

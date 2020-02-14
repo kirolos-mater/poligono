@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-  <EntityContainerMapping StorageEntityContainer="PosizionisStoreContainer" CdmEntityContainer="PosizioniEntities2">
+  <EntityContainerMapping StorageEntityContainer="PosizionisStoreContainer" CdmEntityContainer="PosizioniEntities3">
     <EntitySetMapping Name="C__MigrationHistory">
       <EntityTypeMapping TypeName="Posizionis.C__MigrationHistory">
         <MappingFragment StoreEntitySet="__MigrationHistory">
@@ -26,6 +26,7 @@
         <MappingFragment StoreEntitySet="StringheMouse">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="StringaMouse" ColumnName="StringaMouse" />
+          <ScalarProperty Name="DataOra" ColumnName="DataOra" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

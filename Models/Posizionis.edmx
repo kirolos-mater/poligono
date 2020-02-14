@@ -28,8 +28,9 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="StringaMouse" Type="text" />
+          <Property Name="DataOra" Type="timestamp" StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityContainer Name="PosizionisStoreContainer">
           <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />
@@ -64,10 +65,11 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="StringaMouse" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="DataOra" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
         </EntityType>
-        <EntityContainer Name="PosizioniEntities2" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="PosizioniEntities3" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="C__MigrationHistory" EntityType="Self.C__MigrationHistory" />
           <EntitySet Name="Posizionis" EntityType="Self.Posizionis" />
           <EntitySet Name="StringheMouse" EntityType="Self.StringheMouse" />
@@ -77,7 +79,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="PosizionisStoreContainer" CdmEntityContainer="PosizioniEntities2">
+        <EntityContainerMapping StorageEntityContainer="PosizionisStoreContainer" CdmEntityContainer="PosizioniEntities3">
           <EntitySetMapping Name="C__MigrationHistory">
             <EntityTypeMapping TypeName="Posizionis.C__MigrationHistory">
               <MappingFragment StoreEntitySet="__MigrationHistory">
@@ -103,6 +105,7 @@
               <MappingFragment StoreEntitySet="StringheMouse">
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="StringaMouse" ColumnName="StringaMouse" />
+                <ScalarProperty Name="DataOra" ColumnName="DataOra" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -16,5 +16,6 @@ namespace poligono.Models
     {
         public int Id { get; set; }
         public string StringaMouse { get; set; }
+        public byte[] DataOra { get; set; }
     }
 }

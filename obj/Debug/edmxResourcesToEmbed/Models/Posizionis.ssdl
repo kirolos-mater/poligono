@@ -23,8 +23,9 @@
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="StringaMouse" Type="text" />
+    <Property Name="DataOra" Type="timestamp" StoreGeneratedPattern="Computed" />
   </EntityType>
   <EntityContainer Name="PosizionisStoreContainer">
     <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" Schema="dbo" store:Type="Tables" />

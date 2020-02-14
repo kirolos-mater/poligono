@@ -102,9 +102,10 @@
 }
 
 @*<p id="posizioniMouse"></p>*@
-<form action="/" method="post">
-    <input id="stringamousehtml" name="stringamousehtml" type="text" runat="server" />
-</form>
+@*<form action="/" method="post">*@
+    @*<input id="stringamousehtml" name="stringamousehtml" type="text" runat="server" />*@
+@*</form>*@
+<button id="UltimaArea" name="UltimaArea" onclick="UltimaArea()">Ultima area salvata</button>
 <div id="mapid"></div>
 <style>
     #mapid {
@@ -159,7 +160,39 @@
 
         return inside;
     };
-
+    function UltimaArea() {
+        console.log("richiamo ultima area");
+        $.ajax({  
+            type: 'POST',  
+            url: '@Url.Action("getArea")',  
+            dataType: 'json',
+            data: { Id: '', StringaMouse: "" },  
+            success: function (data) {  
+                //var items = '';  
+                $.each(data, function PuntiUltimaArea(i, item) {
+                    //console.log(data);
+                    var id = item.Id;
+                    console.log(data.length);
+                    console.log(id);
+                    var puntiUltimaArea = item.StringaMouse;
+                    console.log(puntiUltimaArea);
+                    if (id == data.length - 1) {
+                        var puntiPerPoligono = [puntiUltimaArea];
+                        console.log(puntiPerPoligono);
+                        var poligonoDb = creaPoligono(puntiPerPoligono);
+                    }
+                    
+                });
+            },  
+            error: function (ex) {  
+                var r = jQuery.parseJSON(response.responseText);  
+                alert("Message: " + r.Message);  
+                alert("StackTrace: " + r.StackTrace);  
+                alert("ExceptionType: " + r.ExceptionType);  
+            }  
+        });  
+        return false;  
+    }  
     var puntijs = [@puntiStr];// ponte da C# a javascript
     console.log(puntijs);
     //var mapLayer = MQ.mapLayer();
@@ -223,28 +256,27 @@
         iconUrl: 'marker-yellow.png'
     });
     /* poligono che usa come vertici coordinate assegnate */
-    var puntiAssegnati = [[45.4523599440727, 9.154427433314709],
-    [45.45600255600573, 9.166078949272247],
-    [45.46124027981537, 9.164405250864576],
-    [45.4602168547772, 9.149835491461005], ];
-    var poligonoDefinito = L.polygon([
-        puntiAssegnati
-    ]).addTo(map);
-    console.log(poligonoDefinito);
-    var perimetroPoligono = 0;
-    for (var i = 0; i < puntiAssegnati.length; i++) {
-        var j = i + 1;
-        if (j >= puntiAssegnati.length) {
-            j = 0;
-        }
-        var punto1 = puntiAssegnati[i];
-        var punto2 = puntiAssegnati[j];
-        var distanzaVerticiPoligono = getDistance(punto1, punto2);
-        console.log(distanzaVerticiPoligono);
-        perimetroPoligono += distanzaVerticiPoligono;
+    function DefinisciPoligono (coordinate){
+        var puntiAssegnati = coordinate;
+        var poligonoDefinito = L.polygon([
+            puntiAssegnati
+        ]).addTo(map);
+        console.log(poligonoDefinito);
     }
-    console.log(puntiAssegnati);
-    console.log(perimetroPoligono);
+    //var perimetroPoligono = 0;
+    //for (var i = 0; i < puntiAssegnati.length; i++) {
+    //    var j = i + 1;
+    //    if (j >= puntiAssegnati.length) {
+    //        j = 0;
+    //    }
+    //    var punto1 = puntiAssegnati[i];
+    //    var punto2 = puntiAssegnati[j];
+    //    var distanzaVerticiPoligono = getDistance(punto1, punto2);
+    //    console.log(distanzaVerticiPoligono);
+    //    perimetroPoligono += distanzaVerticiPoligono;
+    //}
+    //console.log(puntiAssegnati);
+    //console.log(perimetroPoligono);
     var markerMouse = new Array();
     var nclick = 0;
     var posizioniMouse = new Array();
@@ -292,23 +324,23 @@
             //console.log(stringaPerAjax);
         }
         //console.log("rimuovo poligono dalla mappa" + poligonoMouse);
-        document.getElementById("stringamousehtml").value = puntiMouseSalvati;
+        //document.getElementById("stringamousehtml").value = puntiMouseSalvati;
         /* fonte per creare AJAX https://www.c-sharpcorner.com/blogs/using-ajax-in-asp-net-mvc */
-        @*$.ajax({  
+        $.ajax({  
             type: "POST",  
             url: '@Url.Action("createArea")',
-            data: JSON.stringify(stringaPerAjax),  
+            data: JSON.stringify({ StringaMouse: stringaPerAjax }),  
             dataType: "json",  
             contentType: "application/json; charset=utf-8",  
             success: function () {  
                  //alert("Data has been added successfully.");  
-                LoadData();  
+                //LoadData();  
             },  
             error: function () {  
                 alert("Error while inserting data");  
             }  
-        });*@  
-        @*@{ 
+        });
+        @*{ 
             
             System.Diagnostics.Debug.WriteLine("Valore iniziale stringa");
             System.Diagnostics.Debug.WriteLine(stringaMouse);
@@ -384,29 +416,29 @@
         ////var centro = L.circle(new L.LatLng(centriCerchi[0], centriCerchi[1]), { radius: 200, stroke: false }).addTo(map);
         /* distanza punti poligono */
         /* determinazione posizione marker rispetto al poligono */
-        var dentro = isMarkerInsidePolygon(marker, poligonoDefinito);
-        for (var contatore1 = 0; contatore1 < puntiAssegnati.length; contatore1++) {
-            var contatore2 = contatore1 + 1;
-            if (contatore2 >= puntiAssegnati.length) {
-                contatore2 = 0;
-            }
-            var punto1 = puntiAssegnati[contatore1];
-            var punto2 = puntiAssegnati[contatore2];
-            var distanzaVerticiPoligono = getDistance(punto1, punto2);
-            var verticePoligono = puntiAssegnati[contatore1];
-            var distanzaMarkerVertice1 = getDistance(punto1, puntiMatrice);
-            var distanzaMarkerVertice2 = getDistance(punto2, puntiMatrice);
-            var limite = 40;
-            var sommaDistanze = distanzaMarkerVertice1 + distanzaMarkerVertice2;
-            //console.log(distanzaMarkerVerticePoligono);
-            if (sommaDistanze <= (distanzaVerticiPoligono + limite)) {
-                var alertMarkerBordo = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 50, stroke: false, color: 'yellow' }).addTo(map);
-            }
-        }
-        //console.log(dentro);
-        if (dentro) {
-            var alertMarkerInterno = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 150, stroke: false, color: 'red' }).addTo(map);
-        }
+        //var dentro = isMarkerInsidePolygon(marker, poligonoDefinito);
+        //for (var contatore1 = 0; contatore1 < puntiAssegnati.length; contatore1++) {
+        //    var contatore2 = contatore1 + 1;
+        //    if (contatore2 >= puntiAssegnati.length) {
+        //        contatore2 = 0;
+        //    }
+        //    var punto1 = puntiAssegnati[contatore1];
+        //    var punto2 = puntiAssegnati[contatore2];
+        //    var distanzaVerticiPoligono = getDistance(punto1, punto2);
+        //    var verticePoligono = puntiAssegnati[contatore1];
+        //    var distanzaMarkerVertice1 = getDistance(punto1, puntiMatrice);
+        //    var distanzaMarkerVertice2 = getDistance(punto2, puntiMatrice);
+        //    var limite = 40;
+        //    var sommaDistanze = distanzaMarkerVertice1 + distanzaMarkerVertice2;
+        //    //console.log(distanzaMarkerVerticePoligono);
+        //    if (sommaDistanze <= (distanzaVerticiPoligono + limite)) {
+        //        var alertMarkerBordo = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 50, stroke: false, color: 'yellow' }).addTo(map);
+        //    }
+        //}
+        ////console.log(dentro);
+        //if (dentro) {
+        //    var alertMarkerInterno = L.circle(new L.LatLng(puntiMatrice[0], puntiMatrice[1]), { radius: 150, stroke: false, color: 'red' }).addTo(map);
+        //}
     }
     map.addLayer(markers);
     /* progetto in pausa: poligono che prenda solo i vertici esterni */
