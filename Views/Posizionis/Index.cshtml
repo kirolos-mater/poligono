@@ -171,18 +171,54 @@
                 //var items = '';  
                 $.each(data, function PuntiUltimaArea(i, item) {
                     //console.log(data);
+                    //item.Id = data.length;
+                    console.log(i);
                     var id = item.Id;
-                    console.log(data.length);
+                    // console.log(data.length);
                     console.log(id);
                     var puntiUltimaArea = item.StringaMouse;
                     console.log(puntiUltimaArea);
-                    if (id == data.length - 1) {
-                        var puntiPerPoligono = [puntiUltimaArea];
+                    var maxid = Math.max(i);
+                    console.log(maxid);
+                    if (id > i) {
+                        for(var i = 0; i < puntiUltimaArea.length; i++){
+                            puntiUltimaArea = puntiUltimaArea.replace(",", "");
+                            puntiUltimaArea = puntiUltimaArea.replace("[", "");
+                            puntiUltimaArea = puntiUltimaArea.replace("]", "");                           
+                        }
+                        puntiUltimaArea = puntiUltimaArea.split(" ");
+                        console.log(puntiUltimaArea);
+                        console.log(puntiUltimaArea.length);
+                        var puntiDecimali = new Array();
+                        var stringa;
+                        for(var i = 0; i < puntiUltimaArea.length - 1; i++){
+                            stringa = puntiUltimaArea[i];
+                            //console.log(stringa);
+                            puntiDecimali[i] = parseFloat(stringa);
+                        }
+                        console.log(puntiUltimaArea);
+                        console.log(puntiDecimali);
+                        var puntiPerPoligono = new Array();
+                        var j = 0;
+                        for (var i = 0; i < puntiDecimali.length; i = i + 2) {
+                            var latIndex = i;
+                            var lngIndex = i + 1;
+                            puntiPerPoligono[j] = [puntiDecimali[latIndex], puntiDecimali[lngIndex]];
+                            j++;
+                        }
+                        if (last_pl != null) {
+                                last_pl.removeFrom(map); 
+                        }
+                        console.log(puntiPerPoligono);
+                        puntiPerPoligono = Array (puntiPerPoligono);
                         console.log(puntiPerPoligono);
                         var poligonoDb = creaPoligono(puntiPerPoligono);
+                        console.log(poligonoDb);
+                        poligonoDb.addTo(map);
+                        last_pl = poligonoDb;
                     }
-                    
-                });
+                    console.log(puntiPerPoligono);
+                });                
             },  
             error: function (ex) {  
                 var r = jQuery.parseJSON(response.responseText);  
@@ -243,18 +279,18 @@
     //], {stroke: true}).addTo(mymap);
     //console.log(poligonoPercorso);
     /* definizione icone Marker */
-    var greenIcon = L.icon({
-        iconUrl: 'marker-green.png'
-    });
-    var blueIcon = L.icon({
-        iconUrl: 'marker-blue.png'
-    });
-    var redIcon = L.icon({
-        iconUrl: 'marker-red.png'
-    });
-    var yellowIcon = L.icon({
-        iconUrl: 'marker-yellow.png'
-    });
+    // var greenIcon = L.icon({
+    //     iconUrl: 'marker-green.png'
+    // });
+    // var blueIcon = L.icon({
+    //     iconUrl: 'marker-blue.png'
+    // });
+    // var redIcon = L.icon({
+    //     iconUrl: 'marker-red.png'
+    // });
+    // var yellowIcon = L.icon({
+    //     iconUrl: 'marker-yellow.png'
+    // });
     /* poligono che usa come vertici coordinate assegnate */
     function DefinisciPoligono (coordinate){
         var puntiAssegnati = coordinate;
@@ -393,7 +429,7 @@
     for (var i = 0; i < puntijs.length; i++) {
         /*cluster di marker*/
         var puntiMatrice = puntijs[i];
-        var marker = L.marker(new L.LatLng(puntiMatrice[0], puntiMatrice[1], { icon: redIcon }));
+        var marker = L.marker(new L.LatLng(puntiMatrice[0], puntiMatrice[1]));
         //console.log(marker);
         markers.addLayer(marker);
         //if (tipo != puntiMatrice[2]) {

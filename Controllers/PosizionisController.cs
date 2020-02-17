@@ -40,6 +40,13 @@ namespace poligono.Controllers
             StringheMouse = db.StringheMouse.ToList();
             return Json(StringheMouse, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetUltimaArea(string id)
+        {
+            StringheMouse StringheMouse = new StringheMouse();
+            StringheMouse = db.StringheMouse.OrderByDescending(z => z.Id).FirstOrDefault();
+            return Json(StringheMouse, JsonRequestBehavior.AllowGet);
+        }
+
 
         // GET: Posizionis/Details/5
         public ActionResult Details(int? id)
